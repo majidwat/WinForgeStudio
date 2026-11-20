@@ -1,0 +1,184 @@
+import { Button, CheckBox } from "std-widgets.slint";
+
+export component MainWindow inherits Window {
+    title: "WinForge Studio";
+    width: 1120px;
+    height: 760px;
+    min-width: 900px;
+    min-height: 620px;
+    background: #0c1118;
+
+    in-out property <string> os_name: "Windows";
+    in-out property <string> cpu_name: "CPU";
+    in-out property <string> cpu_count: "—";
+    in-out property <string> ram_total: "—";
+    in-out property <string> ram_used: "—";
+    in-out property <string> ram_percent: "—";
+    in-out property <string> host_name: "PC";
+    in-out property <int> active_page: 0;
+    callback refresh-requested();
+
+    Rectangle {
+        background: #0c1118;
+    }
+
+    HorizontalLayout {
+        spacing: 0;
+
+        Rectangle {
+            width: 228px;
+            background: #111923;
+            border-color: #202b39;
+            border-width: 1px;
+
+            VerticalLayout {
+                padding: 18px;
+                spacing: 12px;
+
+                HorizontalLayout {
+                    spacing: 10px;
+                    height: 48px;
+                    Rectangle {
+                        width: 38px;
+                        height: 38px;
+                        border-radius: 11px;
+                        background: #3b82f6;
+                        Text { text: "W"; color: white; font-size: 20px; font-weight: 700; horizontal-alignment: center; vertical-alignment: center; }
+                    }
+                    VerticalLayout {
+                        spacing: 2px;
+                        Text { text: "WinForge"; color: #f3f6fb; font-size: 18px; font-weight: 700; }
+                        Text { text: "STUDIO"; color: #8292a6; font-size: 10px; letter-spacing: 2px; }
+                    }
+                }
+
+                Rectangle { height: 1px; background: #202b39; }
+
+                Text { text: "WORKSPACE"; color: #718198; font-size: 10px; letter-spacing: 1.5px; }
+
+                for nav in [
+                    { title: "Dashboard", icon: "◈", page: 0 },
+                    { title: "System", icon: "▦", page: 1 },
+                    { title: "Processes", icon: "⌘", page: 2 },
+                    { title: "Services", icon: "⚙", page: 3 },
+                    { title: "Startup Apps", icon: "↗", page: 4 },
+                    { title: "Network", icon: "⌁", page: 5 },
+                    { title: "Storage", icon: "▤", page: 6 },
+                    { title: "Privacy", icon: "◇", page: 7 },
+                    { title: "Settings", icon: "⚙", page: 8 }
+                ] : Rectangle {
+                    height: 40;
+                    border-radius: 8px;
+                    background: active_page == nav.page ? #1d2c40 : #111923;
+                    HorizontalLayout {
+                        padding-left: 10px;
+                        spacing: 10px;
+                        Text { text: nav.icon; color: active_page == nav.page ? #77adff : #8796a9; font-size: 16px; vertical-alignment: center; }
+                        Text { text: nav.title; color: active_page == nav.page ? #eaf2ff : #a1afc1; font-size: 13px; vertical-alignment: center; }
+                    }
+                    TouchArea { clicked => { active_page = nav.page; } }
+                }
+
+                Rectangle { height: 1px; background: #202b39; }
+
+                VerticalLayout {
+                    padding-top: 4px;
+                    spacing: 5px;
+                    Text { text: "SYSTEM"; color: #718198; font-size: 10px; letter-spacing: 1.5px; }
+                    Text { text: host_name; color: #c4d0df; font-size: 12px; }
+                    Text { text: os_name; color: #8190a4; font-size: 11px; }
+                }
+
+                Rectangle { }
+            }
+        }
+
+        VerticalLayout {
+            padding: 26px;
+            spacing: 18px;
+
+            HorizontalLayout {
+                height: 46px;
+                spacing: 10px;
+                VerticalLayout {
+                    spacing: 2px;
+                    Text { text: active_page == 0 ? "Dashboard" : active_page == 1 ? "System Overview" : active_page == 2 ? "Processes" : active_page == 3 ? "Services" : active_page == 4 ? "Startup Apps" : active_page == 5 ? "Network" : active_page == 6 ? "Storage" : active_page == 7 ? "Privacy" : "Settings"; color: #f2f5f9; font-size: 24px; font-weight: 700; }
+                    Text { text: "Overview and tools for your Windows system"; color: #8796a8; font-size: 12px; }
+                }
+                Rectangle { }
+                Button { text: "↻ Refresh"; clicked => { refresh-requested(); } }
+            }
+
+            if active_page == 0: VerticalLayout {
+                spacing: 16;
+                Rectangle {
+                    height: 120px;
+                    border-radius: 12px;
+                    background: #172435;
+                    border-color: #263b53;
+                    border-width: 1px;
+                    HorizontalLayout {
+                        padding: 20px;
+                        spacing: 10px;
+                        VerticalLayout {
+                            spacing: 8px;
+                            Text { text: "Welcome to WinForge"; color: #f2f6fb; font-size: 22px; font-weight: 700; }
+                            Text { text: "A lightweight workspace to understand and manage your Windows PC."; color: #9aabc0; font-size: 13px; }
+                            Text { text: "Read-only system overview is available now."; color: #70b5ff; font-size: 12px; }
+                        }
+                    }
+                }
+
+                GridLayout {
+                    columns: 2;
+                    spacing: 12px;
+                    Rectangle { height: 116px; border-radius: 10px; background: #151f2c; border-color: #263445; border-width: 1px; VerticalLayout { padding: 16px; spacing: 8px; Text { text: "MEMORY USED"; color: #8495aa; font-size: 10px; letter-spacing: 1px; } Text { text: ram_used; color: #eaf1f8; font-size: 25px; font-weight: 700; } Text { text: ram_percent + " of " + ram_total; color: #7fa9d8; font-size: 12px; } } }
+                    Rectangle { height: 116px; border-radius: 10px; background: #151f2c; border-color: #263445; border-width: 1px; VerticalLayout { padding: 16px; spacing: 8px; Text { text: "PROCESSORS"; color: #8495aa; font-size: 10px; letter-spacing: 1px; } Text { text: cpu_count; color: #eaf1f8; font-size: 25px; font-weight: 700; } Text { text: "Logical CPU cores"; color: #7fa9d8; font-size: 12px; } } }
+                    Rectangle { height: 116px; border-radius: 10px; background: #151f2c; border-color: #263445; border-width: 1px; VerticalLayout { padding: 16px; spacing: 8px; Text { text: "OPERATING SYSTEM"; color: #8495aa; font-size: 10px; letter-spacing: 1px; } Text { text: os_name; color: #eaf1f8; font-size: 20px; font-weight: 700; } Text { text: "Detected OS"; color: #7fa9d8; font-size: 12px; } } }
+                    Rectangle { height: 116px; border-radius: 10px; background: #151f2c; border-color: #263445; border-width: 1px; VerticalLayout { padding: 16px; spacing: 8px; Text { text: "CPU"; color: #8495aa; font-size: 10px; letter-spacing: 1px; } Text { text: cpu_name; color: #eaf1f8; font-size: 15px; font-weight: 700; wrap: word-wrap; } Text { text: "Processor model"; color: #7fa9d8; font-size: 12px; } } }
+                }
+
+                Rectangle {
+                    height: 142px;
+                    border-radius: 10px;
+                    background: #151f2c;
+                    border-color: #263445;
+                    border-width: 1px;
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 9px;
+                        Text { text: "Quick status"; color: #e8eff8; font-size: 14px; font-weight: 700; }
+                        Text { text: "System inventory is read-only. Management features will be enabled after risk checks and recovery support are implemented."; color: #98a9bd; font-size: 12px; wrap: word-wrap; }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            Rectangle { width: 8px; height: 8px; border-radius: 4px; background: #4bc58b; }
+                            Text { text: "No system changes are made by this dashboard."; color: #83cfa9; font-size: 11px; }
+                        }
+                    }
+                }
+            }
+
+            if active_page != 0: Rectangle {
+                background: #151f2c;
+                border-radius: 12px;
+                border-color: #263445;
+                border-width: 1px;
+                VerticalLayout {
+                    padding: 24px;
+                    spacing: 12px;
+                    Text { text: "This module is planned"; color: #e8eff8; font-size: 18px; font-weight: 700; }
+                    Text { text: "The module is not active in this build. System changes will only be added with explicit confirmation, safety checks, and recovery support."; color: #9aabc0; font-size: 13px; wrap: word-wrap; }
+                    Button { text: "Back to Dashboard"; clicked => { active_page = 0; } }
+                }
+            }
+
+            Rectangle { }
+            HorizontalLayout {
+                height: 24px;
+                Text { text: "WINFORGE STUDIO  •  PREVIEW BUILD"; color: #66768a; font-size: 10px; vertical-alignment: center; }
+                Rectangle { }
+                Text { text: "Rust · Slint"; color: #66768a; font-size: 10px; vertical-alignment: center; }
+            }
+        }
+    }
+}
