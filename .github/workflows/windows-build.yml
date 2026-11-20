@@ -1,21 +1,16 @@
-name: Windows build
-
+name: Rust Windows Build
 on:
   push:
-    branches: [ main ]
+    branches: [main, migration/rust-slint-v2]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-      - name: Restore
-        run: dotnet restore src/WinForgeStudio/WinForgeStudio.csproj
-      - name: Build Release
-        run: dotnet build src/WinForgeStudio/WinForgeStudio.csproj -c Release --no-restore
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build release
+        run: cargo build --release
