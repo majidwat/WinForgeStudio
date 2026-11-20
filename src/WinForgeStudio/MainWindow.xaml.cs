@@ -1,0 +1,89 @@
+using System.Windows;
+using System.Windows.Controls;
+using WinForgeStudio.Models;
+using WinForgeStudio.ViewModels;
+
+namespace WinForgeStudio;
+
+public partial class MainWindow : Window
+{
+    private readonly MainViewModel _vm = new();
+
+    public MainWindow()
+    {
+        InitializeComponent();
+        ServicesGrid.ItemsSource = _vm.FilteredServices;
+        ProcessesGrid.ItemsSource = _vm.Processes;
+        StartupGrid.ItemsSource = _vm.Startup;
+        JournalPathText.Text = _vm.JournalPath;
+
+        Loaded += (_, _) => { _vm.Refresh(); UpdateOverview(); };
+        _vm.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(MainViewModel.Status))
+                StatusText.Text = _vm.Status;
+            if (e.PropertyName == nameof(MainViewModel.FilteredServices))
+                ServicesGrid.ItemsSource = _vm.FilteredServices;
+        };
+    }
+
+    private void Show(string panel, string title)
+    {
+        OverviewPanel.Visibility = ServicesPanel.Visibility = ProcessesPanel.Visibility =
+            StartupPanel.Visibility = JournalPanel.Visibility = SettingsPanel.Visibility = Visibility.Collapsed;
+        switch (panel)
+        {
+            case "overview": OverviewPanel.Visibility = Visibility.Visible; UpdateOverview(); break;
+            case "services": ServicesPanel.Visibility = Visibility.Visible; break;
+            case "processes": ProcessesPanel.Visibility = Visibility.Visible; break;
+            case "startup": StartupPanel.Visibility = Visibility.Visible; break;
+            case "journal": JournalPanel.Visibility = Visibility.Visible; break;
+            case "settings": SettingsPanel.Visibility = Visibility.Visible; break;
+        }
+        PageTitle.Text = title;
+    }
+
+    private void UpdateOverview()
+    {
+        if (_vm.Snapshot is not { } s) return;
+        WindowsValue.Text = $"{s.WindowsCaption} • {s.Build}";
+        RamValue.Text = $"{s.TotalRamGb:N1} GB";
+        CpuValue.Text = s.LogicalProcessors.ToString();
+        DiskValue.Text = $"{s.DriveFreeGb:N1} GB";
+        DetailsValue.Text =
+            $"Computer: {s.ComputerName}\nWindows: {s.WindowsCaption}\nVersion / Build: {s.Version} / {s.Build}\n" +
+            $"Architecture: {s.Architecture}\nCPU: {s.CpuName}\nLogical processors: {s.LogicalProcessors}\n" +
+            $"RAM: {s.TotalRamGb:N2} GB installed\nSystem drive: {s.SystemDrive} | {s.DriveFreeGb:N1} GB free of {s.DriveTotalGb:N1} GB\n" +
+            $"Administrator: {(s.IsAdministrator ? "Yes" : "No")}";
+    }
+
+    private void Refresh_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.Refresh();
+        UpdateOverview();
+        ServicesGrid.ItemsSource = _vm.FilteredServices;
+    }
+
+    private void Overview_Click(object sender, RoutedEventArgs e) => Show("overview", "System Overview");
+    private void Services_Click(object sender, RoutedEventArgs e) => Show("services", "Service Manager");
+    private void Processes_Click(object sender, RoutedEventArgs e) => Show("processes", "Process Explorer");
+    private void Startup_Click(object sender, RoutedEventArgs e) => Show("startup", "Startup Inventory");
+    private void Journal_Click(object sender, RoutedEventArgs e) => Show("journal", "Change Journal");
+    private void Settings_Click(object sender, RoutedEventArgs e) => Show("settings", "Settings");
+
+    private void Search_Changed(object sender, TextChangedEventArgs e)
+    {
+        if (!IsInitialized) return;
+        _vm.Search = ServiceSearch.Text;
+        ServicesGrid.ItemsSource = _vm.FilteredServices;
+    }
+
+    private void Manual_Click(object sender, RoutedEventArgs e) => _vm.ChangeStartup(ServicesGrid.SelectedItem as ServiceInfo, "Manual");
+    private void Automatic_Click(object sender, RoutedEventArgs e) => _vm.ChangeStartup(ServicesGrid.SelectedItem as ServiceInfo, "Automatic");
+    private void Disable_Click(object sender, RoutedEventArgs e) => _vm.ChangeStartup(ServicesGrid.SelectedItem as ServiceInfo, "Disabled");
+
+    private void Language_Changed(object sender, SelectionChangedEventArgs e)
+    {
+        // Placeholder until full resource-based EN/FA and RTL localization is implemented.
+    }
+}
