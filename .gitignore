@@ -1,8 +1,4 @@
-**/bin/
-**/obj/
-.vs/
-publish/
-*.user
-*.suo
+target/
+Cargo.lock
 *.log
-*.dmp
+.DS_Store
