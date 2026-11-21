@@ -3,7 +3,7 @@ pub fn inventory() -> (String, String) {
     #[cfg(windows)] {
         let script = "$items=Get-ScheduledTask -ErrorAction SilentlyContinue | Sort-Object TaskPath,TaskName; 'Scheduled tasks: '+$items.Count; $items | Select-Object @{N='Task';E={$_.TaskName}},@{N='Folder';E={$_.TaskPath}},State,@{N='Author';E={$_.Author}} | Format-Table -AutoSize | Out-String -Width 220";
         return match Command::new("powershell").args(["-NoProfile","-NonInteractive","-Command",script]).output() {
-            Ok(o) if o.status.success() => { let s=String::from_utf8_lossy(&o.stdout).trim().to_string(); let count=s.lines().next().unwrap_or("—").to_string(); (count,s) },
+            Ok(o) if o.status.success() => { let s=crate::output::bounded(&o.stdout).trim().to_string(); let count=s.lines().next().unwrap_or("—").to_string(); (count,s) },
             Ok(o) => ("Unavailable".into(),String::from_utf8_lossy(&o.stderr).to_string()),
             Err(e) => ("Unavailable".into(),format!("PowerShell could not start: {e}")),
         };
