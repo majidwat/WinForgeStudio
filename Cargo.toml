@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 slint = "1.8"
 sysinfo = "0.30"
+winreg = "0.52"
 
 [build-dependencies]
 slint-build = "1.8"

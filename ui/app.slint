@@ -9,6 +9,8 @@ export component MainWindow inherits Window {
     in-out property <string> os_version: "—";
     in-out property <string> hostname: "—";
     in-out property <string> uptime: "—";\n    in-out property <string> process_count: "—";\n    in-out property <string> top_processes: "—";
+    in-out property <string> startup_count: "—";
+    in-out property <string> startup_items: "—";
     in-out property <string> cpu_name: "CPU";
     in-out property <string> cpu_count: "—";
     in-out property <string> ram_total: "—";
@@ -62,7 +64,8 @@ export component MainWindow inherits Window {
                 Rectangle { height: 64px; border-radius: 8px; background: #1a222d; VerticalLayout { padding: 12px; Text { text: "Memory"; color: #8396ad; font-size: 11px; } Text { text: ram_used + " used of " + ram_total; color: #f0f4f9; font-size: 17px; } Text { text: ram_percent + " utilization"; color: #80b5ef; font-size: 12px; } } }
                 Rectangle { height: 64px; border-radius: 8px; background: #1a222d; VerticalLayout { padding: 12px; Text { text: "System uptime"; color: #8396ad; font-size: 11px; } Text { text: uptime; color: #f0f4f9; font-size: 17px; } } }
             }
-            if active_page == 2: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px; Text { text: "Running processes · " + process_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Top processes by memory usage (read-only snapshot)"; color: #9fb0c4; font-size: 12px; } Text { text: top_processes; color: #d6e0eb; font-size: 13px; } } }\n            if active_page > 2: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 24px; spacing: 12px; Text { text: "Coming soon"; color: #edf3fa; font-size: 18px; font-weight: 700; } Text { text: "This module will be implemented with safety checks and restore support."; color: #9fb0c4; font-size: 13px; } Button { text: "Back to Dashboard"; clicked => { active_page = 0; } } } }
+            if active_page == 2: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px; Text { text: "Running processes · " + process_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Top processes by memory usage (read-only snapshot)"; color: #9fb0c4; font-size: 12px; } Text { text: top_processes; color: #d6e0eb; font-size: 13px; } } }\n            if active_page == 4: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px; Text { text: "Startup entries · " + startup_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only inventory from Run and RunOnce registry keys. No changes are made."; color: #9fb0c4; font-size: 12px; } Text { text: startup_items; color: #d6e0eb; font-size: 12px; } } }
+            if active_page > 2 && active_page != 4: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 24px; spacing: 12px; Text { text: "Coming soon"; color: #edf3fa; font-size: 18px; font-weight: 700; } Text { text: "This module will be implemented with safety checks and restore support."; color: #9fb0c4; font-size: 13px; } Button { text: "Back to Dashboard"; clicked => { active_page = 0; } } } }
             Rectangle { }
             Text { text: "PREVIEW BUILD · Rust / Slint"; color: #697b91; font-size: 10px; }
         }
