@@ -10,7 +10,8 @@ The active Rust + Slint application provides read-only views for:
 - Network configuration/adapters; physical disks and volumes
 - Installed applications, signed device drivers and scheduled tasks
 - Recent System event warnings/errors, installed hotfixes and firewall profiles/rules
-- Existing restore points and environment variables (secret-like values redacted)\n- Read-only temporary-folder cleanup size preview (never deletes files)
+- Existing restore points and environment variables (secret-like values redacted)
+- Read-only temporary-folder cleanup size preview (never deletes files)
 - Defender/UAC status, battery, Windows licensing and current boot entry
 - Power schemes, Plug and Play problem devices, motherboard/BIOS/graphics hardware
 - Windows privacy policy and app-consent indicators
@@ -19,7 +20,11 @@ Inventory collection runs on a worker thread. Refresh scans are serialized, the 
 
 The legacy WPF source under `src/WinForgeStudio` is retained for reference. The active preview is Rust + Slint.
 
-## Navigation\n\nUse the sidebar to open inspection modules. Dashboard cards summarize OS, CPU, RAM, process count and uptime. Select Refresh to rerun the read-only inventory; refresh is ignored while a scan is running. Settings explains privacy and safety behavior.\n\n## Build
+## Navigation
+
+Use the sidebar to open inspection modules. Dashboard cards summarize OS, CPU, RAM, process count and uptime. Select Refresh to rerun the read-only inventory; refresh is ignored while a scan is running. Settings explains privacy and safety behavior.
+
+## Build
 
 On Windows with stable Rust:
 
