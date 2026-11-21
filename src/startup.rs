@@ -22,6 +22,19 @@ mod windows {
                 }
             }
         }
+        for (folder, label) in [
+            (std::env::var("APPDATA").ok().map(|p| std::path::PathBuf::from(p).join("Microsoft\\Windows\\Start Menu\\Programs\\Startup")), "Current user Startup folder"),
+            (std::env::var("ProgramData").ok().map(|p| std::path::PathBuf::from(p).join("Microsoft\\Windows\\Start Menu\\Programs\\StartUp")), "All users Startup folder"),
+        ] {
+            if let Some(folder) = folder {
+                if let Ok(items) = std::fs::read_dir(folder) {
+                    for item in items.flatten() {
+                        let path = item.path();
+                        entries.push(format!("{} | {} | {}", label, path.file_name().unwrap_or_default().to_string_lossy(), path.display()));
+                    }
+                }
+            }
+        }
         entries.sort();
         let count = entries.len().to_string();
         (count, entries.join("\n"))
