@@ -1,3 +1,8 @@
+mod boot;
+mod adapters;
+mod activation;
+mod security;
+mod battery;
 mod system;
 mod startup;
 mod services;
@@ -47,4 +52,14 @@ fn apply_snapshot(ui: &MainWindow) {
     ui.set_firewall_count(firewall_count.into()); ui.set_firewall_items(firewall_items.into());
     ui.set_restore_count(restore_count.into()); ui.set_restore_items(restore_items.into());
     ui.set_environment_count(environment_count.into()); ui.set_environment_items(environment_items.into());
+    let (battery_count, battery_items) = battery::inventory();
+    let (security_count, security_items) = security::inventory();
+    let (activation_count, activation_items) = activation::inventory();
+    let (adapter_count, adapter_items) = adapters::inventory();
+    let (boot_count, boot_items) = boot::inventory();
+    ui.set_battery_count(battery_count.into()); ui.set_battery_items(battery_items.into());
+    ui.set_security_count(security_count.into()); ui.set_security_items(security_items.into());
+    ui.set_activation_count(activation_count.into()); ui.set_activation_items(activation_items.into());
+    ui.set_adapter_count(adapter_count.into()); ui.set_adapter_items(adapter_items.into());
+    ui.set_boot_count(boot_count.into()); ui.set_boot_items(boot_items.into());
 }

@@ -33,6 +33,16 @@ export component MainWindow inherits Window {
     in-out property <string> restore_items: "—";
     in-out property <string> environment_count: "—";
     in-out property <string> environment_items: "—";
+    in-out property <string> battery_count: "—";
+    in-out property <string> battery_items: "—";
+    in-out property <string> security_count: "—";
+    in-out property <string> security_items: "—";
+    in-out property <string> activation_count: "—";
+    in-out property <string> activation_items: "—";
+    in-out property <string> adapter_count: "—";
+    in-out property <string> adapter_items: "—";
+    in-out property <string> boot_count: "—";
+    in-out property <string> boot_items: "—";
     in-out property <string> cpu_name: "CPU";
     in-out property <string> cpu_count: "—";
     in-out property <string> ram_total: "—";
@@ -53,7 +63,7 @@ export component MainWindow inherits Window {
                 Text { text: "WINFORGE"; color: #f4f6f9; font-size: 20px; font-weight: 700; }
                 Text { text: "STUDIO / SYSTEM UTILITY"; color: #8191a6; font-size: 10px; }
                 Rectangle { height: 1px; background: #283443; }
-                for item in [{name: "Dashboard", id: 0}, {name: "System", id: 1}, {name: "Processes", id: 2}, {name: "Services", id: 3}, {name: "Startup", id: 4}, {name: "Network", id: 5}, {name: "Storage", id: 6}, {name: "Installed Apps", id: 7}, {name: "Drivers", id: 8}, {name: "Task Scheduler", id: 9}, {name: "Event Viewer", id: 10}, {name: "Windows Updates", id: 11}, {name: "Firewall", id: 12}, {name: "Restore Points", id: 13}, {name: "Environment", id: 14}, {name: "Privacy", id: 15}, {name: "Settings", id: 16}] : Rectangle {
+                for item in [{name: "Dashboard", id: 0}, {name: "System", id: 1}, {name: "Processes", id: 2}, {name: "Services", id: 3}, {name: "Startup", id: 4}, {name: "Network", id: 5}, {name: "Storage", id: 6}, {name: "Installed Apps", id: 7}, {name: "Drivers", id: 8}, {name: "Task Scheduler", id: 9}, {name: "Event Viewer", id: 10}, {name: "Windows Updates", id: 11}, {name: "Firewall", id: 12}, {name: "Restore Points", id: 13}, {name: "Environment", id: 14}, {name: "Security", id: 15}, {name: "Battery", id: 16}, {name: "Activation", id: 17}, {name: "Network Adapters", id: 18}, {name: "Boot Configuration", id: 19}, {name: "Privacy", id: 20}, {name: "Settings", id: 21}] : Rectangle {
                     height: 38px;
                     border-radius: 7px;
                     background: active_page == item.id ? #25364a : #151d28;
@@ -99,7 +109,12 @@ export component MainWindow inherits Window {
             if active_page == 12: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: firewall_count; color: #f0f4f9; font-size: 18px; } Text { text: "Firewall profile settings and enabled rules · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: firewall_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 13: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: restore_count; color: #f0f4f9; font-size: 18px; } Text { text: "Existing system restore points · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: restore_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 14: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: environment_count; color: #f0f4f9; font-size: 18px; } Text { text: "Current process environment variables · Values may contain private paths or tokens"; color: #9fb0c4; font-size: 12px; } Text { text: environment_items; color: #d6e0eb; font-size: 11px; } } }
-            if active_page > 14: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 24px; spacing: 12px; Text { text: "Coming soon"; color: #edf3fa; font-size: 18px; font-weight: 700; } Text { text: "This module will be implemented with safety checks and restore support."; color: #9fb0c4; font-size: 13px; } Button { text: "Back to Dashboard"; clicked => { active_page = 0; } } } }
+            if active_page == 15: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: security_count; color: #f0f4f9; font-size: 18px; } Text { text: "Defender, Firewall and UAC status · Read-only checks"; color: #9fb0c4; font-size: 12px; } Text { text: security_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 16: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: battery_count; color: #f0f4f9; font-size: 18px; } Text { text: "Battery presence and reported charge/capacity · Hardware dependent"; color: #9fb0c4; font-size: 12px; } Text { text: battery_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 17: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: activation_count; color: #f0f4f9; font-size: 18px; } Text { text: "Windows licensing status · Only partial product-key suffix is queried"; color: #9fb0c4; font-size: 12px; } Text { text: activation_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 18: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: adapter_count; color: #f0f4f9; font-size: 18px; } Text { text: "Physical and virtual network adapter inventory · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: adapter_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 19: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: boot_count; color: #f0f4f9; font-size: 18px; } Text { text: "Current Windows boot entry · Read-only BCDEdit query"; color: #9fb0c4; font-size: 12px; } Text { text: boot_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page > 19: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 24px; spacing: 12px; Text { text: "Coming soon"; color: #edf3fa; font-size: 18px; font-weight: 700; } Text { text: "This module will be implemented with safety checks and restore support."; color: #9fb0c4; font-size: 13px; } Button { text: "Back to Dashboard"; clicked => { active_page = 0; } } } }
             Rectangle { }
             Text { text: "PREVIEW BUILD · Rust / Slint"; color: #697b91; font-size: 10px; }
         }
