@@ -1,2 +1,20 @@
-# Build instructions
-Install Rust stable with rustup on Windows. From the repository root, run `cargo run` for a debug build or `cargo build --release` for an optimized build. The first build downloads dependencies and can take longer. Windows CI is configured to compile the release target. Build status is not considered verified until a workflow run completes successfully.
+# Build and test
+
+Requirements:
+- Windows 10 or Windows 11
+- Stable Rust toolchain (install via rustup)
+- Windows SDK/runtime components required by Slint's selected renderer
+
+Run from the repository root in PowerShell:
+
+```powershell
+cargo test --all-targets
+cargo build --release
+cargo run
+```
+
+The release executable is `target/release/winforge-studio.exe`.
+
+GitHub Actions runs tests and a release build on `windows-latest`. On success, download the `WinForgeStudio-windows` artifact from the workflow run page. Artifacts are retained for 14 days. This is an unsigned preview binary, not an installer; Windows SmartScreen may display a warning.
+
+The application is inspection-only. Some system queries can return partial data based on permissions, Windows edition, hardware and installed PowerShell modules. No automatic elevation is performed.

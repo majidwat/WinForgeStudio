@@ -1,28 +1,26 @@
 # Roadmap
 
 ## Implemented in the Rust + Slint preview
-- [x] Dashboard shell and live OS/CPU/RAM/process snapshot
-- [x] Read-only service and startup inventory
-- [x] Network configuration, adapters, physical disks and volumes
-- [x] Installed applications, signed drivers and scheduled tasks
-- [x] Event log, installed hotfix, firewall and restore-point inventory
+- [x] Dashboard and OS/CPU/RAM/process snapshot
+- [x] Read-only services, startup, network, storage, apps, drivers and scheduled tasks
+- [x] Event log, installed hotfixes, firewall and restore points
 - [x] Environment inventory with secret-like values redacted
-- [x] Defender/UAC status, battery, activation and boot-entry diagnostics
-- [x] Power scheme inventory and Plug and Play device problem-code inventory
-- [x] Worker-thread scanning with a single active scan guard and UI status
+- [x] Defender/UAC, battery, Windows activation and boot diagnostics
+- [x] Power schemes, PnP problem devices, motherboard/BIOS/graphics inventory
+- [x] Worker-thread scanning, scan status and single-active-scan guard
 - [x] Bounded diagnostic output and UTF-8 truncation unit tests
-- [x] Windows CI tests and release build workflow
+- [x] CI test/build workflow with downloadable Windows executable artifact
 
 ## Remaining before a usable 1.0 release
-- [ ] Per-module progress, cancellation and timeouts for external commands
-- [ ] Replace formatted PowerShell tables with structured data and searchable grids
+- [ ] Per-module progress, cancellation and process timeouts
+- [ ] Structured PowerShell output and searchable/filterable data grids
 - [ ] Complete Persian/English localization and RTL layout
-- [ ] Add module-level error states and last-scan timestamps
-- [ ] Add safe process details and filtering
-- [ ] Add service dependency analysis and a reviewed safety catalog
-- [ ] Add backup/restore workflow and recovery validation before destructive features
-- [ ] Add UI smoke tests on Windows 10 and Windows 11
-- [ ] Package a signed installer/portable release and document upgrade/uninstall
+- [ ] Module-level error states and last-scan timestamps
+- [ ] Safe process details, filtering and process-tree view
+- [ ] Service dependency analysis and reviewed safety catalog
+- [ ] Backup/restore workflow and recovery validation before destructive features
+- [ ] Windows 10/11 UI smoke tests
+- [ ] Signed installer/portable release and upgrade/uninstall documentation
 
 ## Explicitly excluded from automatic optimization
 - Disabling Defender, Firewall, Windows Update, UAC, or core Windows services
