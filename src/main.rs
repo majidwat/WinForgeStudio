@@ -1,3 +1,5 @@
+mod device_health;
+mod power;
 mod output;
 mod boot;
 mod adapters;
