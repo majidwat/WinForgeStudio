@@ -8,7 +8,7 @@ pub fn inventory() -> (String, String) {
                 let count=s.lines().filter(|line| line.contains("GUID:")).count().to_string();
                 ("Power schemes: ".to_owned()+&count,s)
             },
-            Ok(o) => ("Unavailable".into(),String::from_utf8_lossy(&o.stderr).to_string()),
+            Ok(o) => ("Unavailable".into(),crate::output::bounded(&o.stderr)),
             Err(e) => ("Unavailable".into(),format!("Unable to run powercfg: {e}")),
         };
     }

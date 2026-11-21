@@ -1,14 +1,21 @@
 $ErrorActionPreference = "Stop"
-$project = Join-Path $PSScriptRoot "src\WinForgeStudio\WinForgeStudio.csproj"
+Push-Location $PSScriptRoot
+try {
+    Write-Host "Rust toolchain:" -ForegroundColor Cyan
+    cargo --version
+    if ($LASTEXITCODE -ne 0) { throw "Rust/Cargo is required. Install the stable toolchain with rustup." }
 
-Write-Host "Using .NET SDK:" -ForegroundColor Cyan
-dotnet --version
-if ($LASTEXITCODE -ne 0) { throw ".NET 8 SDK is required." }
+    Write-Host "Running tests..." -ForegroundColor Cyan
+    cargo test --all-targets
+    if ($LASTEXITCODE -ne 0) { throw "Rust tests failed." }
 
-dotnet restore $project
-if ($LASTEXITCODE -ne 0) { throw "Restore failed." }
+    Write-Host "Building WinForge Studio (Release)..." -ForegroundColor Cyan
+    cargo build --release
+    if ($LASTEXITCODE -ne 0) { throw "Release build failed." }
 
-dotnet build $project -c Release --no-restore
-if ($LASTEXITCODE -ne 0) { throw "Build failed." }
-
-Write-Host "Build completed." -ForegroundColor Green
+    $exe = Join-Path $PSScriptRoot "target\release\winforge-studio.exe"
+    Write-Host "Build completed: $exe" -ForegroundColor Green
+}
+finally {
+    Pop-Location
+}

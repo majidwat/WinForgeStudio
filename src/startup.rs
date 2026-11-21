@@ -10,6 +10,8 @@ mod windows {
             for path in [
                 "Software\\Microsoft\\Windows\\CurrentVersion\\Run",
                 "Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+                "Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+                "Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
             ] {
                 if let Ok(run_key) = key.open_subkey_with_flags(path, KEY_READ) {
                     for (name, value) in run_key.enum_values().flatten() {
@@ -37,7 +39,7 @@ mod windows {
         }
         entries.sort();
         let count = entries.len().to_string();
-        (count, entries.join("\n"))
+        (count, crate::output::bounded(entries.join("\n").as_bytes()))
     }
 }
 #[cfg(windows)]
