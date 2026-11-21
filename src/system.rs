@@ -11,10 +11,14 @@ pub fn snapshot() -> Snapshot {
     let percent = if total > 0 { (used as f64 / total as f64 * 100.0).round() as u64 } else { 0 };
     let uptime_seconds = System::uptime();
     let uptime = format!("{}d {}h {}m", uptime_seconds / 86_400, (uptime_seconds % 86_400) / 3_600, (uptime_seconds % 3_600) / 60);
-    let mut processes: Vec<(String, u64)> = system.processes().values().map(|p| (p.name().to_string(), p.memory())).collect();
-    processes.sort_by(|a,b| b.1.cmp(&a.1));
+    let mut processes: Vec<(String, String, u64, f32)> = system.processes().values()
+        .map(|p| (p.pid().to_string(), p.name().to_string(), p.memory(), p.cpu_usage()))
+        .collect();
+    processes.sort_by(|a,b| b.2.cmp(&a.2));
     let process_count = processes.len().to_string();
-    let top_processes = processes.iter().take(10).map(|(name, memory)| format!("{:<34} {:>7.1} MB", name, *memory as f64 / 1024.0)).collect::<Vec<_>>().join("\n");
+    let top_processes = format!("{:<8} {:<30} {:>10} {:>8}\\n{}", "PID", "PROCESS", "RAM (MB)", "CPU %", processes.iter().take(20)
+        .map(|(pid, name, memory, cpu)| format!("{:<8} {:<30} {:>10.1} {:>7.1}", pid, name.chars().take(29).collect::<String>(), *memory as f64 / 1024.0, cpu))
+        .collect::<Vec<_>>().join("\\n"));
     Snapshot {
         os_name: System::name().unwrap_or_else(|| "Windows".into()), os_version: System::os_version().unwrap_or_else(|| "Unknown".into()),
         hostname: System::host_name().unwrap_or_else(|| "Unknown".into()), uptime,
