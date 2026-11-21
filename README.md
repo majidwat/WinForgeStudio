@@ -19,7 +19,7 @@ Inventory collection runs on a worker thread. Refresh scans are serialized, the 
 
 The legacy WPF source under `src/WinForgeStudio` is retained for reference. The active preview is Rust + Slint.
 
-## Build
+## Navigation\n\nUse the sidebar to open inspection modules. Dashboard cards summarize OS, CPU, RAM, process count and uptime. Select Refresh to rerun the read-only inventory; refresh is ignored while a scan is running. Settings explains privacy and safety behavior.\n\n## Build
 
 On Windows with stable Rust:
 

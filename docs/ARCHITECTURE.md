@@ -8,7 +8,7 @@ The active preview is a Rust + Slint desktop application.
 - Other `src/*.rs` modules: isolated, read-only Windows inventory queries.
 - `src/output.rs`: bounded UTF-8-safe command output and unit tests.
 
-Refresh starts a worker thread. Inventory collection happens off the UI thread; the completed snapshot is transferred back with Slint's event-loop callback before properties are updated. Only one full scan may run at a time.
+Refresh starts a worker thread. Inventory collection happens off the UI thread; the completed snapshot is transferred back with Slint's event-loop callback before properties are updated. Only one full scan may run at a time. The Dashboard provides snapshot cards for OS, CPU, memory, process count, hostname and uptime. Settings is informational and does not change Windows settings.
 
 External PowerShell/Windows commands use non-interactive, no-profile invocation where applicable. Results are informational and can be incomplete if the command, module, hardware, or permission is unavailable. The application does not auto-elevate.
 
