@@ -15,7 +15,7 @@
 ## Remaining before a usable 1.0 release
 - [ ] Per-module progress, cancellation and external-process timeouts
 - [ ] Structured PowerShell output and searchable/filterable data grids
-- [ ] Complete Persian/English localization and RTL layout\n- [x] Dashboard overview cards for CPU, memory, OS, process count and uptime\n- [x] Settings page documenting privacy, safety and scan behavior
+- [ ] Complete Persian/English localization and RTL layout\n- [x] Dashboard overview cards for CPU, memory, OS, process count and uptime\n- [x] Settings page documenting privacy, safety and scan behavior\n- [x] Dashboard quick health review using RAM, Defender, device problem codes and pending-restart indicators (informational only)
 - [ ] Module-level error states and last-scan timestamps
 - [ ] Safe process details, filtering and process-tree view
 - [ ] Service dependency analysis and reviewed safety catalog

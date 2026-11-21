@@ -51,6 +51,7 @@ struct InventorySnapshot {
     device_health: (String, String),
     hardware: (String, String),
     privacy: (String, String),
+    health: String,
 }
 
 fn main() -> Result<(), slint::PlatformError> {
@@ -83,9 +84,13 @@ fn refresh_async(weak: slint::Weak<MainWindow>) {
     });
 }
 
-fn collect_snapshot() -> InventorySnapshot {
+    let security = security::inventory();
+    let device_health = device_health::inventory();
+    let updates = updates::inventory();
+    let system = system::snapshot();
+    let health = health_summary(&system, &security, &device_health, &updates);
     InventorySnapshot {
-        system: system::snapshot(),
+        system,
         startup: startup::inventory(),
         services: services::inventory(),
         network: network::inventory(),
@@ -94,20 +99,48 @@ fn collect_snapshot() -> InventorySnapshot {
         drivers: drivers::inventory(),
         tasks: tasks::inventory(),
         events: event_logs::inventory(),
-        updates: updates::inventory(),
+        updates,
         firewall: firewall::inventory(),
         restore: restore_points::inventory(),
         environment: environment::inventory(),
         battery: battery::inventory(),
-        security: security::inventory(),
+        security,
         activation: activation::inventory(),
         adapters: adapters::inventory(),
         boot: boot::inventory(),
         power: power::inventory(),
-        device_health: device_health::inventory(),
+        device_health,
         hardware: hardware::inventory(),
         privacy: privacy::inventory(),
+        health,
     }
+}
+
+fn health_summary(system: &system::Snapshot, security: &(String, String), devices: &(String, String), updates: &(String, String)) -> String {
+    let mut notes = Vec::new();
+    if let Some(percent) = system.ram_percent.trim_end_matches('%').parse::<u64>().ok() {
+        if percent >= 90 { notes.push(format!("High memory usage: {}. Review heavy apps on the Processes page.", system.ram_percent)); }
+        else if percent >= 75 { notes.push(format!("Memory usage is elevated: {}.", system.ram_percent)); }
+        else { notes.push(format!("Memory usage looks moderate: {}.", system.ram_percent)); }
+    } else { notes.push("Memory usage could not be assessed.".into()); }
+
+    let sec = security.1.to_lowercase();
+    if sec.contains("real-time protection: false") { notes.push("Defender real-time protection reports disabled. Review Windows Security; no changes were made.".into()); }
+    else if sec.contains("real-time protection: true") { notes.push("Defender real-time protection reports enabled.".into()); }
+    else { notes.push("Defender real-time protection status was not confirmed.".into()); }
+
+    let device_text = devices.1.to_lowercase();
+    if device_text.contains("devices reporting a problem: 0") || device_text.contains("no plug and play device problem codes") {
+        notes.push("No Plug and Play problem codes were reported.".into());
+    } else if device_text.contains("devices reporting a problem:") {
+        notes.push("Some Plug and Play devices report problems. Review the Device Health page before making changes.".into());
+    } else { notes.push("Device health was not fully assessed.".into()); }
+
+    let update_text = updates.1.to_lowercase();
+    if update_text.contains("pending reboot indicators: true") { notes.push("Windows reports a pending restart indicator.".into()); }
+    else if update_text.contains("pending reboot indicators: false") { notes.push("No pending restart indicator was detected by these checks.".into()); }
+    else { notes.push("Pending restart status is unknown.".into()); }
+    notes.join("\n• ")
 }
 
 fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
@@ -164,4 +197,5 @@ fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
     ui.set_hardware_items(data.hardware.1.into());
     ui.set_privacy_count(data.privacy.0.into());
     ui.set_privacy_items(data.privacy.1.into());
+    ui.set_health_summary(data.health.into());
 }
