@@ -1,4 +1,5 @@
-mod cleanup;\nmod privacy;
+mod cleanup;
+mod privacy;
 mod hardware;
 mod device_health;
 mod power;
@@ -52,6 +53,7 @@ struct InventorySnapshot {
     hardware: (String, String),
     privacy: (String, String),
     health: String,
+    cleanup: (String, String),
 }
 
 fn main() -> Result<(), slint::PlatformError> {
@@ -114,6 +116,7 @@ fn collect_snapshot() -> InventorySnapshot {
         hardware: hardware::inventory(),
         privacy: privacy::inventory(),
         health,
+        cleanup: cleanup::inventory(),
     }
 }
 
@@ -198,7 +201,9 @@ fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
     ui.set_hardware_items(data.hardware.1.into());
     ui.set_privacy_count(data.privacy.0.into());
     ui.set_privacy_items(data.privacy.1.into());
-    ui.set_health_summary(data.health.into());\n    ui.set_cleanup_count(data.cleanup.0.into());\n    ui.set_cleanup_items(data.cleanup.1.into());
+    ui.set_health_summary(data.health.into());
+    ui.set_cleanup_count(data.cleanup.0.into());
+    ui.set_cleanup_items(data.cleanup.1.into());\n    ui.set_cleanup_count(data.cleanup.0.into());\n    ui.set_cleanup_items(data.cleanup.1.into());
 }
 
 #[cfg(test)]
