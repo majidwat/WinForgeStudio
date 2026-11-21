@@ -96,6 +96,9 @@ export component MainWindow inherits Window {
                 Button { text: "Refresh"; clicked => { refresh-requested(); } }
                 Text { text: scan_status; color: #80b5ef; font-size: 11px; }
             }
+            ScrollView {
+                VerticalLayout {
+                    spacing: 12px;
             if active_page == 0: VerticalLayout {
                 spacing: 12px;
                 Rectangle { height: 100px; border-radius: 10px; background: #1a2a3c; VerticalLayout { padding: 18px; Text { text: "Welcome to WinForge Studio"; color: #f1f5fa; font-size: 21px; font-weight: 700; } Text { text: "A modern, lightweight workspace for Windows."; color: #9fb0c4; font-size: 13px; } } }
@@ -134,6 +137,8 @@ export component MainWindow inherits Window {
             if active_page == 22: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: hardware_count; color: #f0f4f9; font-size: 18px; } Text { text: "System, motherboard, BIOS and graphics adapter inventory · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: hardware_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 23: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: privacy_count; color: #f0f4f9; font-size: 18px; } Text { text: "Windows privacy policy and app-consent indicators · Read-only; not a complete audit"; color: #9fb0c4; font-size: 12px; } Text { text: privacy_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page > 23: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 24px; spacing: 12px; Text { text: "Coming soon"; color: #edf3fa; font-size: 18px; font-weight: 700; } Text { text: "This module will be implemented with safety checks and restore support."; color: #9fb0c4; font-size: 13px; } Button { text: "Back to Dashboard"; clicked => { active_page = 0; } } } }
+                }
+            }
             Rectangle { }
             Text { text: "PREVIEW BUILD · Rust / Slint"; color: #697b91; font-size: 10px; }
         }
