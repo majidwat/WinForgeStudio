@@ -1,4 +1,4 @@
-import { Button } from "std-widgets.slint";
+import { Button, ScrollView } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
     title: "WinForge Studio";
@@ -72,12 +72,17 @@ export component MainWindow inherits Window {
                 Text { text: "WINFORGE"; color: #f4f6f9; font-size: 20px; font-weight: 700; }
                 Text { text: "STUDIO / SYSTEM UTILITY"; color: #8191a6; font-size: 10px; }
                 Rectangle { height: 1px; background: #283443; }
-                for item in [{name: "Dashboard", id: 0}, {name: "System", id: 1}, {name: "Processes", id: 2}, {name: "Services", id: 3}, {name: "Startup", id: 4}, {name: "Network", id: 5}, {name: "Storage", id: 6}, {name: "Installed Apps", id: 7}, {name: "Drivers", id: 8}, {name: "Task Scheduler", id: 9}, {name: "Event Viewer", id: 10}, {name: "Windows Updates", id: 11}, {name: "Firewall", id: 12}, {name: "Restore Points", id: 13}, {name: "Environment", id: 14}, {name: "Security", id: 15}, {name: "Battery", id: 16}, {name: "Activation", id: 17}, {name: "Network Adapters", id: 18}, {name: "Boot Configuration", id: 19}, {name: "Power Plans", id: 20}, {name: "Device Health", id: 21}, {name: "Hardware", id: 22}, {name: "Privacy", id: 23}, {name: "Settings", id: 24}] : Rectangle {
+                ScrollView {
+                    VerticalLayout {
+                        spacing: 10px;
+                                        for item in [{name: "Dashboard", id: 0}, {name: "System", id: 1}, {name: "Processes", id: 2}, {name: "Services", id: 3}, {name: "Startup", id: 4}, {name: "Network", id: 5}, {name: "Storage", id: 6}, {name: "Installed Apps", id: 7}, {name: "Drivers", id: 8}, {name: "Task Scheduler", id: 9}, {name: "Event Viewer", id: 10}, {name: "Windows Updates", id: 11}, {name: "Firewall", id: 12}, {name: "Restore Points", id: 13}, {name: "Environment", id: 14}, {name: "Security", id: 15}, {name: "Battery", id: 16}, {name: "Activation", id: 17}, {name: "Network Adapters", id: 18}, {name: "Boot Configuration", id: 19}, {name: "Power Plans", id: 20}, {name: "Device Health", id: 21}, {name: "Hardware", id: 22}, {name: "Privacy", id: 23}, {name: "Settings", id: 24}] : Rectangle {
                     height: 38px;
                     border-radius: 7px;
                     background: active_page == item.id ? #25364a : #151d28;
                     Text { text: item.name; color: #e5edf7; vertical-alignment: center; }
                     TouchArea { clicked => { active_page = item.id; } }
+                }
+                    }
                 }
                 Rectangle { }
             }
