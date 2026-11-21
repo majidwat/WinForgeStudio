@@ -43,6 +43,7 @@ export component MainWindow inherits Window {
     in-out property <string> adapter_items: "—";
     in-out property <string> boot_count: "—";
     in-out property <string> boot_items: "—";
+    in-out property <string> scan_status: "Starting scan…";
     in-out property <string> cpu_name: "CPU";
     in-out property <string> cpu_count: "—";
     in-out property <string> ram_total: "—";
@@ -80,6 +81,7 @@ export component MainWindow inherits Window {
                 Text { text: active_page == 0 ? "Dashboard" : active_page == 1 ? "System Information" : "System Module"; color: #f4f6f9; font-size: 24px; font-weight: 700; }
                 Rectangle { }
                 Button { text: "Refresh"; clicked => { refresh-requested(); } }
+                Text { text: scan_status; color: #80b5ef; font-size: 11px; }
             }
             if active_page == 0: VerticalLayout {
                 spacing: 12px;
