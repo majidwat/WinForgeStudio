@@ -4,7 +4,7 @@ pub fn inventory() -> (String, String) {
     #[cfg(windows)] {
         return match Command::new("powercfg").args(["/list"]).output() {
             Ok(o) if o.status.success() => {
-                let s=String::from_utf8_lossy(&o.stdout).trim().to_string();
+                let s=crate::output::bounded(&o.stdout).trim().to_string();
                 let count=s.lines().filter(|line| line.contains("GUID:")).count().to_string();
                 ("Power schemes: ".to_owned()+&count,s)
             },
