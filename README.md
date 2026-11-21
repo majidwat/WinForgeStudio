@@ -10,7 +10,7 @@ The active Rust + Slint application provides read-only views for:
 - Network configuration/adapters; physical disks and volumes
 - Installed applications, signed device drivers and scheduled tasks
 - Recent System event warnings/errors, installed hotfixes and firewall profiles/rules
-- Existing restore points and environment variables (secret-like values redacted)
+- Existing restore points and environment variables (secret-like values redacted)\n- Read-only temporary-folder cleanup size preview (never deletes files)
 - Defender/UAC status, battery, Windows licensing and current boot entry
 - Power schemes, Plug and Play problem devices, motherboard/BIOS/graphics hardware
 - Windows privacy policy and app-consent indicators

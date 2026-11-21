@@ -1,4 +1,4 @@
-mod privacy;
+mod cleanup;\nmod privacy;
 mod hardware;
 mod device_health;
 mod power;
@@ -198,7 +198,7 @@ fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
     ui.set_hardware_items(data.hardware.1.into());
     ui.set_privacy_count(data.privacy.0.into());
     ui.set_privacy_items(data.privacy.1.into());
-    ui.set_health_summary(data.health.into());
+    ui.set_health_summary(data.health.into());\n    ui.set_cleanup_count(data.cleanup.0.into());\n    ui.set_cleanup_items(data.cleanup.1.into());
 }
 
 #[cfg(test)]
