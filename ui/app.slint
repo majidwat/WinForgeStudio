@@ -48,6 +48,8 @@ export component MainWindow inherits Window {
     in-out property <string> power_items: "—";
     in-out property <string> device_health_count: "—";
     in-out property <string> device_health_items: "—";
+    in-out property <string> hardware_count: "—";
+    in-out property <string> hardware_items: "—";
     in-out property <string> cpu_name: "CPU";
     in-out property <string> cpu_count: "—";
     in-out property <string> ram_total: "—";
@@ -68,7 +70,7 @@ export component MainWindow inherits Window {
                 Text { text: "WINFORGE"; color: #f4f6f9; font-size: 20px; font-weight: 700; }
                 Text { text: "STUDIO / SYSTEM UTILITY"; color: #8191a6; font-size: 10px; }
                 Rectangle { height: 1px; background: #283443; }
-                for item in [{name: "Dashboard", id: 0}, {name: "System", id: 1}, {name: "Processes", id: 2}, {name: "Services", id: 3}, {name: "Startup", id: 4}, {name: "Network", id: 5}, {name: "Storage", id: 6}, {name: "Installed Apps", id: 7}, {name: "Drivers", id: 8}, {name: "Task Scheduler", id: 9}, {name: "Event Viewer", id: 10}, {name: "Windows Updates", id: 11}, {name: "Firewall", id: 12}, {name: "Restore Points", id: 13}, {name: "Environment", id: 14}, {name: "Security", id: 15}, {name: "Battery", id: 16}, {name: "Activation", id: 17}, {name: "Network Adapters", id: 18}, {name: "Boot Configuration", id: 19}, {name: "Power Plans", id: 20}, {name: "Device Health", id: 21}, {name: "Privacy", id: 22}, {name: "Settings", id: 23}] : Rectangle {
+                for item in [{name: "Dashboard", id: 0}, {name: "System", id: 1}, {name: "Processes", id: 2}, {name: "Services", id: 3}, {name: "Startup", id: 4}, {name: "Network", id: 5}, {name: "Storage", id: 6}, {name: "Installed Apps", id: 7}, {name: "Drivers", id: 8}, {name: "Task Scheduler", id: 9}, {name: "Event Viewer", id: 10}, {name: "Windows Updates", id: 11}, {name: "Firewall", id: 12}, {name: "Restore Points", id: 13}, {name: "Environment", id: 14}, {name: "Security", id: 15}, {name: "Battery", id: 16}, {name: "Activation", id: 17}, {name: "Network Adapters", id: 18}, {name: "Boot Configuration", id: 19}, {name: "Power Plans", id: 20}, {name: "Device Health", id: 21}, {name: "Hardware", id: 22}, {name: "Privacy", id: 23}, {name: "Settings", id: 24}] : Rectangle {
                     height: 38px;
                     border-radius: 7px;
                     background: active_page == item.id ? #25364a : #151d28;
@@ -122,7 +124,8 @@ export component MainWindow inherits Window {
             if active_page == 19: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: boot_count; color: #f0f4f9; font-size: 18px; } Text { text: "Current Windows boot entry · Read-only BCDEdit query"; color: #9fb0c4; font-size: 12px; } Text { text: boot_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 20: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: power_count; color: #f0f4f9; font-size: 18px; } Text { text: "Available Windows power schemes · Read-only powercfg query"; color: #9fb0c4; font-size: 12px; } Text { text: power_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 21: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: device_health_count; color: #f0f4f9; font-size: 18px; } Text { text: "Plug and Play devices reporting non-zero problem codes · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: device_health_items; color: #d6e0eb; font-size: 11px; } } }
-            if active_page > 21: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 24px; spacing: 12px; Text { text: "Coming soon"; color: #edf3fa; font-size: 18px; font-weight: 700; } Text { text: "This module will be implemented with safety checks and restore support."; color: #9fb0c4; font-size: 13px; } Button { text: "Back to Dashboard"; clicked => { active_page = 0; } } } }
+            if active_page == 22: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: hardware_count; color: #f0f4f9; font-size: 18px; } Text { text: "System, motherboard, BIOS and graphics adapter inventory · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: hardware_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page > 22: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 24px; spacing: 12px; Text { text: "Coming soon"; color: #edf3fa; font-size: 18px; font-weight: 700; } Text { text: "This module will be implemented with safety checks and restore support."; color: #9fb0c4; font-size: 13px; } Button { text: "Back to Dashboard"; clicked => { active_page = 0; } } } }
             Rectangle { }
             Text { text: "PREVIEW BUILD · Rust / Slint"; color: #697b91; font-size: 10px; }
         }
