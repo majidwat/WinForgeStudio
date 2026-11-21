@@ -97,7 +97,8 @@ export component MainWindow inherits Window {
             HorizontalLayout {
                 Text { text: active_page == 0 ? "Dashboard" : active_page == 1 ? "System Information" : active_page == 2 ? "Processes" : active_page == 3 ? "Services" : active_page == 4 ? "Startup" : active_page == 5 ? "Network" : active_page == 6 ? "Storage" : active_page == 7 ? "Installed Apps" : active_page == 8 ? "Drivers" : active_page == 9 ? "Task Scheduler" : active_page == 10 ? "Event Viewer" : active_page == 11 ? "Windows Updates" : active_page == 12 ? "Firewall" : active_page == 13 ? "Restore Points" : active_page == 14 ? "Environment" : active_page == 15 ? "Security" : active_page == 16 ? "Battery" : active_page == 17 ? "Activation" : active_page == 18 ? "Network Adapters" : active_page == 19 ? "Boot Configuration" : active_page == 20 ? "Power Plans" : active_page == 21 ? "Device Health" : active_page == 22 ? "Hardware" : active_page == 23 ? "Privacy" : active_page == 24 ? "Settings" : active_page == 25 ? "Cleanup Preview" : "System Module"; color: #f4f6f9; font-size: 24px; font-weight: 700; }
                 Rectangle { }
-                Button { text: "Refresh"; clicked => { refresh-requested(); } }\n                Button { text: "Export report"; clicked => { export-requested(); } }
+                Button { text: "Refresh"; clicked => { refresh-requested(); } }
+                Button { text: "Export report"; clicked => { export-requested(); } }
                 Text { text: scan_status; color: #80b5ef; font-size: 11px; }
             }
             ScrollView {
