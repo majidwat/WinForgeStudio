@@ -200,3 +200,35 @@ fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
     ui.set_privacy_items(data.privacy.1.into());
     ui.set_health_summary(data.health.into());
 }
+
+#[cfg(test)]
+mod health_tests {
+    use super::*;
+    fn snapshot(percent: &str) -> system::Snapshot {
+        system::Snapshot {
+            os_name: "Windows".into(), os_version: "test".into(), hostname: "host".into(), uptime: "1d".into(),
+            cpu_name: "CPU".into(), cpu_count: "8".into(), ram_total: "16 GB".into(), ram_used: "8 GB".into(),
+            ram_percent: percent.into(), process_count: "1".into(), top_processes: "test".into(),
+        }
+    }
+    #[test]
+    fn reports_high_memory_usage() {
+        let sec=("ok".into(),"Real-time protection: True".into());
+        let dev=("Devices reporting a problem: 0".into(),"No Plug and Play device problem codes were reported.".into());
+        let upd=("ok".into(),"Pending reboot indicators: False".into());
+        let result=health_summary(&snapshot("95%"),&sec,&dev,&upd);
+        assert!(result.contains("High memory usage"));
+        assert!(result.contains("protection reports enabled"));
+        assert!(result.contains("No Plug and Play"));
+    }
+    #[test]
+    fn reports_unknown_indicators_without_false_assurance() {
+        let sec=("Unavailable".into(),"Unavailable".into());
+        let dev=("Unavailable".into(),"Unavailable".into());
+        let upd=("Unavailable".into(),"Unavailable".into());
+        let result=health_summary(&snapshot("—"),&sec,&dev,&upd);
+        assert!(result.contains("could not be assessed"));
+        assert!(result.contains("was not confirmed"));
+        assert!(result.contains("unknown"));
+    }
+}
