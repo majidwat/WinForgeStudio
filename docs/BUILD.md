@@ -15,3 +15,4 @@ Or run `.uild.ps1`, which executes the test suite and builds the Rust release b
 GitHub Actions performs the same tests and release build on `windows-latest`. On success, download the `WinForgeStudio-windows` artifact from the workflow run page. The artifact is retained for 14 days. It is an unsigned preview executable, not an installer; SmartScreen may display a warning.
 
 The app does not auto-elevate. Some Windows inventory queries may return partial results based on permissions, Windows edition, hardware, or installed PowerShell modules.
+\n## Portable ZIP\n\nAfter a successful release build, run `.\package.ps1` from PowerShell. It stages the executable with README, BUILD and SECURITY documentation, then creates `target/release/WinForgeStudio-portable.zip`. No installer or system-wide changes are made. The portable app is unsigned.\n

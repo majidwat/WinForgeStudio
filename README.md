@@ -33,7 +33,7 @@ cargo test --all-targets
 cargo build --release
 ```
 
-GitHub Actions runs tests and the release build on `windows-latest`, then publishes the executable as `WinForgeStudio-windows` (14-day artifact retention). This is an unsigned preview binary, not an installer.
+GitHub Actions runs tests and the release build on `windows-latest`, then publishes both `WinForgeStudio-windows` (executable) and `WinForgeStudio-portable` (ZIP with docs) artifacts, each with 14-day retention. This is an unsigned preview binary, not an installer.
 
 ## Safety
 
