@@ -1,3 +1,4 @@
+mod privacy;
 mod hardware;
 mod device_health;
 mod power;
@@ -49,6 +50,7 @@ struct InventorySnapshot {
     power: (String, String),
     device_health: (String, String),
     hardware: (String, String),
+    privacy: (String, String),
 }
 
 fn main() -> Result<(), slint::PlatformError> {
@@ -104,6 +106,7 @@ fn collect_snapshot() -> InventorySnapshot {
         power: power::inventory(),
         device_health: device_health::inventory(),
         hardware: hardware::inventory(),
+        privacy: privacy::inventory(),
     }
 }
 
@@ -159,4 +162,6 @@ fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
     ui.set_device_health_items(data.device_health.1.into());
     ui.set_hardware_count(data.hardware.0.into());
     ui.set_hardware_items(data.hardware.1.into());
+    ui.set_privacy_count(data.privacy.0.into());
+    ui.set_privacy_items(data.privacy.1.into());
 }
