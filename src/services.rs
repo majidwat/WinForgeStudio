@@ -7,7 +7,7 @@ pub fn inventory() -> (String, String) {
         let output = Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", script]).output();
         match output {
             Ok(out) if out.status.success() => {
-                let text = String::from_utf8_lossy(&out.stdout).trim().to_string();
+                let text = crate::output::bounded(&out.stdout).trim().to_string();
                 let count_script = "(Get-CimInstance Win32_Service).Count";
                 let count = Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", count_script]).output().map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string()).unwrap_or_else(|_| "?".into());
                 (count, if text.is_empty() { "No service information returned.".into() } else { text })

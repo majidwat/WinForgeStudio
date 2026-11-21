@@ -1,3 +1,4 @@
+mod output;
 mod boot;
 mod adapters;
 mod activation;
