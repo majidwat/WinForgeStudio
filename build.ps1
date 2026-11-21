@@ -13,8 +13,10 @@ try {
     cargo build --release
     if ($LASTEXITCODE -ne 0) { throw "Release build failed." }
 
-    $exe = Join-Path $PSScriptRoot "target\release\winforge-studio.exe"
-    Write-Host "Build completed: $exe" -ForegroundColor Green
+    Write-Host "Packaging portable ZIP..." -ForegroundColor Cyan
+    & (Join-Path $PSScriptRoot "package.ps1")
+    if ($LASTEXITCODE -ne 0) { throw "Packaging failed." }
+    Write-Host "Build and package complete." -ForegroundColor Green
 }
 finally {
     Pop-Location
