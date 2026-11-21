@@ -1,18 +1,19 @@
 # Roadmap
 
 ## Implemented in the Rust + Slint preview
-- [x] Dashboard and OS/CPU/RAM/process snapshot
-- [x] Read-only services, startup, network, storage, apps, drivers and scheduled tasks
-- [x] Event log, installed hotfixes, firewall and restore points
+- [x] Dashboard and OS/CPU/RAM/process snapshot with PID, RAM and CPU columns
+- [x] Read-only services, registry startup entries and user/common Startup folders
+- [x] Network configuration/adapters, storage, installed apps, signed drivers and scheduled tasks
+- [x] Event log, installed hotfixes, firewall and restore-point inventory
 - [x] Environment inventory with secret-like values redacted
-- [x] Defender/UAC, battery, Windows activation and boot diagnostics
+- [x] Defender/UAC, battery, activation, boot and privacy indicators
 - [x] Power schemes, PnP problem devices, motherboard/BIOS/graphics inventory
-- [x] Worker-thread scanning, scan status and single-active-scan guard
+- [x] Worker-thread scanning, single-scan guard, scan status and scrollable navigation/content
 - [x] Bounded diagnostic output and UTF-8 truncation unit tests
-- [x] CI test/build workflow with downloadable Windows executable artifact
+- [x] CI tests, Windows release build and downloadable executable artifact
 
 ## Remaining before a usable 1.0 release
-- [ ] Per-module progress, cancellation and process timeouts
+- [ ] Per-module progress, cancellation and external-process timeouts
 - [ ] Structured PowerShell output and searchable/filterable data grids
 - [ ] Complete Persian/English localization and RTL layout
 - [ ] Module-level error states and last-scan timestamps

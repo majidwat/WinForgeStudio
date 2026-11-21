@@ -12,7 +12,7 @@ pub fn snapshot() -> Snapshot {
     let uptime_seconds = System::uptime();
     let uptime = format!("{}d {}h {}m", uptime_seconds / 86_400, (uptime_seconds % 86_400) / 3_600, (uptime_seconds % 3_600) / 60);
     let mut processes: Vec<(String, String, u64, f32)> = system.processes().values()
-        .map(|p| (p.pid().to_string(), p.name().to_string(), p.memory(), p.cpu_usage()))
+        .map(|p| (p.pid().as_u32().to_string(), p.name().to_string(), p.memory(), p.cpu_usage()))
         .collect();
     processes.sort_by(|a,b| b.2.cmp(&a.2));
     let process_count = processes.len().to_string();

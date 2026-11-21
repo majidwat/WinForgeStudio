@@ -30,7 +30,7 @@ mod windows {
                 if let Ok(items) = std::fs::read_dir(folder) {
                     for item in items.flatten() {
                         let path = item.path();
-                        entries.push(format!("{} | {} | {}", label, path.file_name().unwrap_or_default().to_string_lossy(), path.display()));
+                        entries.push(format!("{} | {} | {}", label, path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| "unknown".into()), path.display()));
                     }
                 }
             }
