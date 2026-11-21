@@ -84,6 +84,39 @@ fn refresh_async(weak: slint::Weak<MainWindow>) {
     });
 }
 
+fn collect_snapshot() -> InventorySnapshot {
+    let security = security::inventory();
+    let device_health = device_health::inventory();
+    let updates = updates::inventory();
+    let system = system::snapshot();
+    let health = health_summary(&system, &security, &device_health, &updates);
+    InventorySnapshot {
+        system,
+        startup: startup::inventory(),
+        services: services::inventory(),
+        network: network::inventory(),
+        storage: storage::inventory(),
+        apps: apps::inventory(),
+        drivers: drivers::inventory(),
+        tasks: tasks::inventory(),
+        events: event_logs::inventory(),
+        updates,
+        firewall: firewall::inventory(),
+        restore: restore_points::inventory(),
+        environment: environment::inventory(),
+        battery: battery::inventory(),
+        security,
+        activation: activation::inventory(),
+        adapters: adapters::inventory(),
+        boot: boot::inventory(),
+        power: power::inventory(),
+        device_health,
+        hardware: hardware::inventory(),
+        privacy: privacy::inventory(),
+        health,
+    }
+}
+
     let security = security::inventory();
     let device_health = device_health::inventory();
     let updates = updates::inventory();
