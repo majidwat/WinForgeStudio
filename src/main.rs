@@ -61,6 +61,8 @@ fn main() -> Result<(), slint::PlatformError> {
     let weak = ui.as_weak();
     refresh_async(weak.clone());
     ui.on_refresh_requested(move || refresh_async(weak.clone()));
+    let export_weak = ui.as_weak();
+    ui.on_export_requested(move || { if let Some(window) = export_weak.upgrade() { export_report(window.get_report_content().to_string(), export_weak.clone()); } });
     ui.run()
 }
 
@@ -147,6 +149,42 @@ fn health_summary(system: &system::Snapshot, security: &(String, String), device
     notes.join("\n• ")
 }
 
+fn build_report(data: &InventorySnapshot) -> String {
+    let mut report = String::from("WinForge Studio - Read-only system report\nGenerated locally; no changes were made.\n\n");
+    report.push_str(&format!("OS: {} {}\nHost: {}\nUptime: {}\nCPU: {} ({} logical)\nRAM: {} / {} ({})\nProcesses: {}\n\n",
+        data.system.os_name, data.system.os_version, data.system.hostname, data.system.uptime, data.system.cpu_name, data.system.cpu_count,
+        data.system.ram_used, data.system.ram_total, data.system.ram_percent, data.system.process_count));
+    for (name, value) in [
+        ("Startup", &data.startup.1), ("Services", &data.services.1), ("Network", &data.network),
+        ("Storage", &data.storage), ("Installed apps", &data.apps.1), ("Drivers", &data.drivers.1),
+        ("Scheduled tasks", &data.tasks.1), ("System events", &data.events.1), ("Windows updates", &data.updates.1),
+        ("Firewall", &data.firewall.1), ("Restore points", &data.restore.1), ("Environment (redacted)", &data.environment.1),
+        ("Battery", &data.battery.1), ("Security", &data.security.1), ("Activation", &data.activation.1),
+        ("Network adapters", &data.adapters.1), ("Boot", &data.boot.1), ("Power plans", &data.power.1),
+        ("Device health", &data.device_health.1), ("Hardware", &data.hardware.1), ("Privacy", &data.privacy.1),
+        ("Health review", &data.health), ("Cleanup preview", &data.cleanup.1),
+    ] {
+        report.push_str(&format!("\n===== {} =====\n{}\n", name, value));
+    }
+    crate::output::bounded(report.as_bytes())
+}
+
+fn export_report(report: String, weak: slint::Weak<MainWindow>) {
+    std::thread::spawn(move || {
+        let outcome = (|| -> Result<std::path::PathBuf, String> {
+            let profile = std::env::var_os("USERPROFILE").ok_or("User profile path is unavailable")?;
+            let folder = std::path::PathBuf::from(profile).join("Documents").join("WinForge Studio").join("Reports");
+            std::fs::create_dir_all(&folder).map_err(|e| format!("Could not create report folder: {e}"))?;
+            let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_err(|e| e.to_string())?.as_secs();
+            let path = folder.join(format!("system-report-{stamp}.txt"));
+            std::fs::write(&path, report.as_bytes()).map_err(|e| format!("Could not write report: {e}"))?;
+            Ok(path)
+        })();
+        let status = match outcome { Ok(path) => format!("Report saved: {}", path.display()), Err(error) => format!("Export failed: {error}") };
+        let _ = slint::invoke_from_event_loop(move || if let Some(ui) = weak.upgrade() { ui.set_scan_status(status.into()); });
+    });
+}
+
 fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
     let s = data.system;
     ui.set_os_name(s.os_name.into());
@@ -203,7 +241,8 @@ fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
     ui.set_privacy_items(data.privacy.1.into());
     ui.set_health_summary(data.health.into());
     ui.set_cleanup_count(data.cleanup.0.into());
-    ui.set_cleanup_items(data.cleanup.1.into());\n    ui.set_cleanup_count(data.cleanup.0.into());
+    ui.set_cleanup_items(data.cleanup.1.into());
+    ui.set_report_content(build_report(&data).into());\n    ui.set_cleanup_count(data.cleanup.0.into());
     ui.set_cleanup_items(data.cleanup.1.into());
 }
 

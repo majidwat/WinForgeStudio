@@ -22,7 +22,7 @@ The legacy WPF source under `src/WinForgeStudio` is retained for reference. The 
 
 ## Navigation
 
-Use the sidebar to open inspection modules. Dashboard cards summarize OS, CPU, RAM, process count and uptime. Select Refresh to rerun the read-only inventory; refresh is ignored while a scan is running. Settings explains privacy and safety behavior.
+Use the sidebar to open inspection modules. Dashboard cards summarize OS, CPU, RAM, process count and uptime. Select Refresh to rerun the read-only inventory; refresh is ignored while a scan is running. Use Export report to save the latest inventory locally as a text report. Settings explains privacy and safety behavior.
 
 ## Build
 

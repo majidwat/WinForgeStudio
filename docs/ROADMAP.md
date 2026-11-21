@@ -19,7 +19,7 @@
 - [x] Dashboard overview cards for CPU, memory, OS, process count and uptime
 - [x] Settings page documenting privacy, safety and scan behavior
 - [x] Dashboard quick health review using RAM, Defender, device problem codes and pending-restart indicators (informational only)
-- [x] Read-only temporary-folder cleanup preview with traversal caps and no deletion
+- [x] Read-only temporary-folder cleanup preview with traversal caps and no deletion\n- [x] Local text report export from the latest inventory
 - [x] Storage volume view reports size, free GB and used percentage
 - [ ] Module-level error states and last-scan timestamps
 - [ ] Safe process details, filtering and process-tree view
