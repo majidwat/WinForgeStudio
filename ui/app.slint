@@ -54,7 +54,9 @@ export component MainWindow inherits Window {
     in-out property <string> privacy_items: "—";
     in-out property <string> health_summary: "Collecting health indicators…";
     in-out property <string> cleanup_count: "—";
-    in-out property <string> cleanup_items: "Temporary folders have not been scanned yet.";\n    in-out property <string> report_content: "Report is not ready until the scan completes.";\n    callback export-requested();
+    in-out property <string> cleanup_items: "Temporary folders have not been scanned yet.";
+    in-out property <string> report_content: "Report is not ready until the scan completes.";
+    callback export-requested();
     in-out property <string> cpu_name: "CPU";
     in-out property <string> cpu_count: "—";
     in-out property <string> ram_total: "—";
