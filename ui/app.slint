@@ -17,6 +17,12 @@ export component MainWindow inherits Window {
     in-out property <string> service_items: "—";
     in-out property <string> network_items: "—";
     in-out property <string> storage_items: "—";
+    in-out property <string> apps_count: "—";
+    in-out property <string> apps_items: "—";
+    in-out property <string> drivers_count: "—";
+    in-out property <string> drivers_items: "—";
+    in-out property <string> tasks_count: "—";
+    in-out property <string> tasks_items: "—";
     in-out property <string> cpu_name: "CPU";
     in-out property <string> cpu_count: "—";
     in-out property <string> ram_total: "—";
@@ -37,7 +43,7 @@ export component MainWindow inherits Window {
                 Text { text: "WINFORGE"; color: #f4f6f9; font-size: 20px; font-weight: 700; }
                 Text { text: "STUDIO / SYSTEM UTILITY"; color: #8191a6; font-size: 10px; }
                 Rectangle { height: 1px; background: #283443; }
-                for item in [{name: "Dashboard", id: 0}, {name: "System", id: 1}, {name: "Processes", id: 2}, {name: "Services", id: 3}, {name: "Startup", id: 4}, {name: "Network", id: 5}, {name: "Storage", id: 6}, {name: "Privacy", id: 7}, {name: "Settings", id: 8}] : Rectangle {
+                for item in [{name: "Dashboard", id: 0}, {name: "System", id: 1}, {name: "Processes", id: 2}, {name: "Services", id: 3}, {name: "Startup", id: 4}, {name: "Network", id: 5}, {name: "Storage", id: 6}, {name: "Installed Apps", id: 7}, {name: "Drivers", id: 8}, {name: "Task Scheduler", id: 9}, {name: "Privacy", id: 10}, {name: "Settings", id: 11}] : Rectangle {
                     height: 38px;
                     border-radius: 7px;
                     background: active_page == item.id ? #25364a : #151d28;
@@ -72,10 +78,13 @@ export component MainWindow inherits Window {
             }
             if active_page == 2: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px; Text { text: "Running processes · " + process_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Top processes by memory usage (read-only snapshot)"; color: #9fb0c4; font-size: 12px; } Text { text: top_processes; color: #d6e0eb; font-size: 13px; } } }
             if active_page == 3: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Windows services · " + service_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only inventory · Refresh to query current state"; color: #9fb0c4; font-size: 12px; } Text { text: service_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 4: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px; Text { text: "Startup entries · " + startup_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only inventory from Run and RunOnce registry keys. No changes are made."; color: #9fb0c4; font-size: 12px; } Text { text: startup_items; color: #d6e0eb; font-size: 12px; } } }
             if active_page == 5: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Network configuration"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only output from Windows ipconfig /all"; color: #9fb0c4; font-size: 12px; } Text { text: network_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 6: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Storage overview"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Physical disks and volumes · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: storage_items; color: #d6e0eb; font-size: 11px; } } }
-            if active_page == 4: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px; Text { text: "Startup entries · " + startup_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only inventory from Run and RunOnce registry keys. No changes are made."; color: #9fb0c4; font-size: 12px; } Text { text: startup_items; color: #d6e0eb; font-size: 12px; } } }
-            if active_page > 2 && active_page != 3 && active_page != 4 && active_page != 5 && active_page != 6: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 24px; spacing: 12px; Text { text: "Coming soon"; color: #edf3fa; font-size: 18px; font-weight: 700; } Text { text: "This module will be implemented with safety checks and restore support."; color: #9fb0c4; font-size: 13px; } Button { text: "Back to Dashboard"; clicked => { active_page = 0; } } } }
+            if active_page == 7: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: apps_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Uninstall registry inventory · No applications are changed"; color: #9fb0c4; font-size: 12px; } Text { text: apps_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 8: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: drivers_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "PnP signed driver inventory · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: drivers_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 9: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: tasks_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Windows Task Scheduler inventory · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: tasks_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page > 9: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 24px; spacing: 12px; Text { text: "Coming soon"; color: #edf3fa; font-size: 18px; font-weight: 700; } Text { text: "This module will be implemented with safety checks and restore support."; color: #9fb0c4; font-size: 13px; } Button { text: "Back to Dashboard"; clicked => { active_page = 0; } } } }
             Rectangle { }
             Text { text: "PREVIEW BUILD · Rust / Slint"; color: #697b91; font-size: 10px; }
         }

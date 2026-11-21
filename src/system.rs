@@ -1,4 +1,4 @@
-use sysinfo::{System, ProcessExt};
+use sysinfo::System;
 
 pub struct Snapshot {
     pub os_name: String, pub os_version: String, pub hostname: String, pub uptime: String,
