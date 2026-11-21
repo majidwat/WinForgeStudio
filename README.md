@@ -36,4 +36,4 @@ The preview is inspection-only. It does not disable services, alter startup entr
 
 Future system-changing operations require preview, explicit confirmation, risk explanation, a durable journal, post-change verification and a recovery path. Defender, Firewall, Windows Update, UAC and core Windows services must never be silently weakened.
 
-See [AGENTS.md](AGENTS.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/SECURITY_MODEL.md](docs/SECURITY_MODEL.md), and [docs/BUILD.md](docs/BUILD.md).
+See the [manual smoke-test checklist](docs/SMOKE_TEST.md). See [AGENTS.md](AGENTS.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/SECURITY_MODEL.md](docs/SECURITY_MODEL.md), and [docs/BUILD.md](docs/BUILD.md).

@@ -4,7 +4,8 @@
 - Added read-only security, battery, activation, network adapter, boot, power plan, device health, hardware and privacy diagnostics.
 - Added asynchronous inventory collection, scan-state feedback, single-scan protection and scrollable navigation/content.
 - Expanded process overview with PID, RAM and CPU usage; expanded startup inventory to include Startup folders.
-- Capped command output and added UTF-8-safe truncation tests.
+- Capped command output, added UTF-8 boundary tests, removed hardware serial collection, and expanded 32-bit startup registry coverage.
+- Updated the PowerShell build script to test/build the active Rust application.
 - Added Windows CI tests, release build and downloadable executable artifact.
 
 ## 0.2.0
