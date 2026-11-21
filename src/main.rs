@@ -186,6 +186,7 @@ fn export_report(report: String, weak: slint::Weak<MainWindow>) {
 }
 
 fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
+    let report = build_report(&data);
     let s = data.system;
     ui.set_os_name(s.os_name.into());
     ui.set_os_version(s.os_version.into());
@@ -242,7 +243,7 @@ fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
     ui.set_health_summary(data.health.into());
     ui.set_cleanup_count(data.cleanup.0.into());
     ui.set_cleanup_items(data.cleanup.1.into());
-    ui.set_report_content(build_report(&data).into());\n    ui.set_cleanup_count(data.cleanup.0.into());
+    ui.set_report_content(report.into());\n    ui.set_cleanup_count(data.cleanup.0.into());
     ui.set_cleanup_items(data.cleanup.1.into());
 }
 
