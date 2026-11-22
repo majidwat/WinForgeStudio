@@ -17,11 +17,11 @@ public partial class MainWindow : Window
         StartupGrid.ItemsSource = _vm.FilteredStartup;
         JournalPathText.Text = _vm.JournalPath;
 
-        Loaded += (_, _) => { _vm.Refresh(); UpdateOverview(); };
+        Loaded += (_, _) => { _ = _vm.RefreshAsync(); };
         _vm.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(MainViewModel.Status))
-                StatusText.Text = _vm.Status;
+            if (e.PropertyName == nameof(MainViewModel.Status)) StatusText.Text = _vm.Status;
+            if (e.PropertyName == nameof(MainViewModel.Snapshot)) UpdateOverview();
             if (e.PropertyName == nameof(MainViewModel.FilteredServices)) ServicesGrid.ItemsSource = _vm.FilteredServices;
             if (e.PropertyName == nameof(MainViewModel.FilteredProcesses)) ProcessesGrid.ItemsSource = _vm.FilteredProcesses;
             if (e.PropertyName == nameof(MainViewModel.FilteredStartup)) StartupGrid.ItemsSource = _vm.FilteredStartup;
@@ -60,9 +60,7 @@ public partial class MainWindow : Window
 
     private void Refresh_Click(object sender, RoutedEventArgs e)
     {
-        _vm.Refresh();
-        UpdateOverview();
-        ServicesGrid.ItemsSource = _vm.FilteredServices;
+        _ = _vm.RefreshAsync();
     }
 
     private void Overview_Click(object sender, RoutedEventArgs e) => Show("overview", "System Overview");
