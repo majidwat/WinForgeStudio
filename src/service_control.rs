@@ -50,3 +50,19 @@ mod tests{
  #[test] fn blocks_core_services(){assert!(validate_name("WinDefend").is_err());assert!(validate_name("RpcSs").is_err());}
  #[test] fn validates_service_names(){assert!(validate_name("Spooler").is_ok());assert!(validate_name("bad name").is_err());assert!(validate_name("x;shutdown").is_err());}
 }
+
+/// Change only between Manual and Automatic. Disabling services is intentionally unsupported.
+pub fn set_start_mode(name:&str, mode:&str)->Result<String,String>{
+    let name=validate_name(name)?;
+    let mode=match mode.to_ascii_lowercase().as_str(){"manual"=>"demand","automatic"=>"auto",_=>return Err("Only Manual or Automatic startup modes are supported.".into())};
+    let before=query_state(&name)?;
+    journal(&format!("REQUEST service-start-mode name={name} mode={mode} before={before}"))?;
+    let out=Command::new("sc.exe").args(["config",&name,"start=",mode]).output().map_err(|e|e.to_string())?;
+    if !out.status.success(){return Err(format!("Windows rejected startup-mode change: {}",String::from_utf8_lossy(&out.stdout)));}
+    let verify=Command::new("sc.exe").args(["qc",&name]).output().map_err(|e|e.to_string())?;
+    let text=String::from_utf8_lossy(&verify.stdout);
+    let expected=if mode=="auto"{"AUTO_START"}else{"DEMAND_START"};
+    if !text.contains(expected){journal(&format!("VERIFY service-start-mode name={name} expected={expected} failed"))?;return Err("Startup mode change was not verified by Windows.".into());}
+    journal(&format!("SUCCESS service-start-mode name={name} mode={mode}"))?;
+    Ok(format!("Service {name} startup mode set to {}.",if mode=="auto"{"Automatic"}else{"Manual"}))
+}
