@@ -76,6 +76,8 @@ public sealed class ServiceManager
     private static (string Risk, string Reason) Assess(string name, string display, string path, string start)
     {
         var n = name.ToLowerInvariant();
+        if (n is "xboxgipsvc" or "xblauthmanager" or "xblgamesave" or "xboxnetapisvc" or "fax" or "mapsbroker" or "lfsvc" or "wmpnetworksvc" or "retaildemo")
+            return ("Low", "Optional consumer feature service. Disabling may remove or limit the associated feature; restore to Automatic/Manual if needed.");
         if (n is "rpcss" or "dcomlaunch" or "eventlog" or "plugplay" or "power" or "lsm" or "samss")
             return ("Critical", "Core Windows infrastructure; do not disable.");
         if (n.Contains("defend") || n.Contains("firewall") || n.Contains("wuauserv") ||
