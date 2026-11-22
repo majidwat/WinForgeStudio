@@ -62,7 +62,7 @@
      <DockPanel>
       <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
        <TextBox x:Name="ServiceSearch" Width="300" Height="32" VerticalContentAlignment="Center" TextChanged="Search_Changed"/>
-       <Button Content="Set Manual" Click="Manual_Click"/>
+       <Button Content="Start selected" Click="StartService_Click"/><Button Content="Stop selected" Click="StopService_Click" Background="#70413F"/><Button Content="Set Manual" Click="Manual_Click"/>
        <Button Content="Set Automatic" Click="Automatic_Click"/>
        <Button Content="Disable" Click="Disable_Click" Background="#70413F"/>
       </StackPanel>
