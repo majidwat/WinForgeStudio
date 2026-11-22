@@ -76,7 +76,13 @@ fn main() -> Result<(), slint::PlatformError> {
         if let Some(window) = service_weak.upgrade() { window.set_scan_status(status.into()); }
         refresh_async(service_weak.clone());
     });
-        let process_weak = ui.as_weak();
+        let service_mode_weak = ui.as_weak();
+    ui.on_service_start_mode_requested(move |name, mode| {
+        let status = match service_control::set_start_mode(&name, &mode) { Ok(message) => message, Err(error) => format!("Startup mode change blocked/failed: {error}") };
+        if let Some(window) = service_mode_weak.upgrade() { window.set_scan_status(status.into()); }
+        refresh_async(service_mode_weak.clone());
+    });
+    let process_weak = ui.as_weak();
     ui.on_terminate_process_requested(move |pid_text, expected_name| {
         let status = match pid_text.parse::<i32>().map_err(|_| "PID must be a positive number".to_string()).and_then(|pid| process_control::terminate(pid, &expected_name)) { Ok(message) => message, Err(error) => format!("Action blocked/failed: {error}") };
         if let Some(window) = process_weak.upgrade() { window.set_scan_status(status.into()); }
