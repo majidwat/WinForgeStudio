@@ -96,6 +96,7 @@ public partial class MainWindow : Window
         _vm.StartupSearch = StartupSearch.Text;
         StartupGrid.ItemsSource = _vm.FilteredStartup;
     }
+    private void RemoveStartup_Click(object sender, RoutedEventArgs e) => _vm.RemoveStartup(StartupGrid.SelectedItem as StartupInfo);
     private void EndProcess_Click(object sender, RoutedEventArgs e) => _vm.EndProcess(ProcessesGrid.SelectedItem as ProcessInfo);
     private void Export_Click(object sender, RoutedEventArgs e) => _vm.ExportReport();
 
