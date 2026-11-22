@@ -70,7 +70,7 @@ fn main() -> Result<(), slint::PlatformError> {
         if let Some(window) = startup_weak.upgrade() { window.set_scan_status(status.into()); }
         refresh_async(startup_weak.clone());
     });
-        let startup_restore_weak = ui.as_weak();
+    let startup_restore_weak = ui.as_weak();
     ui.on_startup_restore_requested(move |backup_name| {
         let status = match startup::restore_current_user_startup_file(&backup_name) { Ok(message) => message, Err(error) => format!("Startup restore blocked/failed: {error}") };
         if let Some(window) = startup_restore_weak.upgrade() { window.set_scan_status(status.into()); }
@@ -82,7 +82,7 @@ fn main() -> Result<(), slint::PlatformError> {
         if let Some(window) = service_weak.upgrade() { window.set_scan_status(status.into()); }
         refresh_async(service_weak.clone());
     });
-        let service_mode_weak = ui.as_weak();
+    let service_mode_weak = ui.as_weak();
     ui.on_service_start_mode_requested(move |name, mode| {
         let status = match service_control::set_start_mode(&name, &mode) { Ok(message) => message, Err(error) => format!("Startup mode change blocked/failed: {error}") };
         if let Some(window) = service_mode_weak.upgrade() { window.set_scan_status(status.into()); }
