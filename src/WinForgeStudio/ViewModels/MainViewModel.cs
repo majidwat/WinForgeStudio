@@ -41,23 +41,33 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     public MainViewModel() => _services = new ServiceManager(_journal);
 
-    public void Refresh()
+    private readonly System.Threading.SemaphoreSlim _scanGate = new(1, 1);
+
+    public async Task RefreshAsync()
     {
+        if (!await _scanGate.WaitAsync(0)) { Status = "A scan is already running."; return; }
+        Status = "Scanning system inventory in background…";
         try
         {
-            Snapshot = _inspector.GetSnapshot();
-            OnChanged(nameof(Snapshot));
-            Services.Clear();
-            foreach (var service in _services.GetServices()) Services.Add(service);
-            Processes.Clear();
-            foreach (var process in _inspector.GetProcesses().Take(500)) Processes.Add(process);
-            OnChanged(nameof(FilteredProcesses));
-            Startup.Clear();
-            foreach (var item in _inspector.GetStartupEntries()) Startup.Add(item);
-            OnChanged(nameof(FilteredStartup));
-            Status = "Scan completed. No changes were made.";
+            var result = await Task.Run(() => (
+                Snapshot: _inspector.GetSnapshot(),
+                Services: _services.GetServices(),
+                Processes: _inspector.GetProcesses().Take(500).ToList(),
+                Startup: _inspector.GetStartupEntries()));
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                Snapshot = result.Snapshot;
+                OnChanged(nameof(Snapshot));
+                Services.Clear(); foreach (var service in result.Services) Services.Add(service);
+                Processes.Clear(); foreach (var process in result.Processes) Processes.Add(process);
+                OnChanged(nameof(FilteredProcesses));
+                Startup.Clear(); foreach (var item in result.Startup) Startup.Add(item);
+                OnChanged(nameof(FilteredStartup));
+                Status = "Scan completed. No changes were made.";
+            });
         }
-        catch (Exception ex) { Status = ex.Message; }
+        catch (Exception ex) { Status = $"Scan failed: {ex.Message}"; }
+        finally { _scanGate.Release(); }
     }
 
     public void ChangeStartup(ServiceInfo? item, string type)
@@ -67,7 +77,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             $"Service: {item.DisplayName}\nCurrent: {item.StartType}\nNew: {type}\n\nRisk: {item.Risk}\n{item.RiskReason}\n\nContinue?",
             "Confirm service change", MessageBoxButton.YesNo, MessageBoxImage.Warning);
         if (result != MessageBoxResult.Yes) return;
-        try { _services.SetStartupType(item.Name, type); Refresh(); Status = $"Updated {item.Name}"; }
+        try { _services.SetStartupType(item.Name, type); _ = RefreshAsync(); Status = $"Updated {item.Name} startup type."; }
         catch (Exception ex) { Status = ex.Message; }
     }
 
@@ -86,7 +96,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             process.Kill(entireProcessTree: false);
             process.WaitForExit(3000);
             Status = $"Termination requested for {item.Name} (PID {item.Id}).";
-            Refresh();
+            _ = RefreshAsync();
         }
         catch (Exception ex) { Status = $"Could not end process: {ex.Message}"; }
     }
