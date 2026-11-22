@@ -19,7 +19,7 @@ Run this checklist on a Windows 10/11 machine after downloading the CI artifact.
 ## Safety and privacy
 - [ ] Confirm no service startup type or service state changes after a scan.
 - [ ] Confirm firewall, power plans, boot configuration, privacy settings and Windows security settings remain unchanged.
-- [ ] Confirm secret-like environment variable values display as `[REDACTED]`.
+- [ ] Confirm sensitive environment variable names (TOKEN, SECRET, AUTH, CERT, JWT, SESSION, PROXY, URL/URI) display as `[REDACTED]`.
 - [ ] Confirm hardware serial numbers are not displayed.
 - [ ] Confirm the app does not request elevation or run remote scripts.
 
