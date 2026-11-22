@@ -1,6 +1,6 @@
-name: Rust Windows Build
+name: Windows Build and Package
 concurrency:
-  group: windows-build-${{ github.ref }}
+  group: winforge-build-${{ github.ref }}
   cancel-in-progress: false
 
 on:
@@ -14,30 +14,32 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
         continue-on-error: true
         timeout-minutes: 2
-      - name: Run tests
+      - name: Test Rust inventory modules
         run: cargo test --all-targets
-      - name: Build release
+      - name: Build Rust preview
         run: cargo build --release
-      - name: Package portable ZIP
+      - name: Build and package active WPF application
         run: .\package.ps1
-      - name: Upload portable ZIP
+      - name: Upload portable WPF ZIP
         uses: actions/upload-artifact@v4
         with:
           name: WinForgeStudio-portable
           path: target/release/WinForgeStudio-portable.zip
           if-no-files-found: error
           retention-days: 14
-      - name: Upload Windows executable
+      - name: Upload standalone Windows executable
         uses: actions/upload-artifact@v4
         with:
           name: WinForgeStudio-windows
-          path: target/release/winforge-studio.exe
+          path: target/release/WinForgeStudio-Windows/WinForgeStudio.exe
           if-no-files-found: error
           retention-days: 14
