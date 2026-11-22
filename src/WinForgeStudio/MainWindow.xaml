@@ -35,7 +35,7 @@
      <ComboBox x:Name="LanguageBox" Width="85" SelectedIndex="0" SelectionChanged="Language_Changed" Margin="4">
       <ComboBoxItem Content="EN"/><ComboBoxItem Content="FA"/>
      </ComboBox>
-     <Button Content="↻ Scan system" Click="Refresh_Click" Background="#245A50"/>
+     <Button Content="Export report" Click="Export_Click" Margin="4"/><Button Content="↻ Scan system" Click="Refresh_Click" Background="#245A50"/>
     </StackPanel>
    </DockPanel>
    <Grid Grid.Row="1">
@@ -81,7 +81,7 @@
      </DockPanel>
     </Grid>
     <Grid x:Name="ProcessesPanel" Visibility="Collapsed">
-     <DataGrid x:Name="ProcessesGrid" AutoGenerateColumns="False" IsReadOnly="True" Background="#191F2B" Foreground="#EAF0F7" RowBackground="#191F2B" AlternatingRowBackground="#202938" BorderThickness="0">
+     <DockPanel><StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8"><TextBox x:Name="ProcessSearch" Width="280" Height="32" VerticalContentAlignment="Center" TextChanged="ProcessSearch_Changed" ToolTip="Filter by name, PID or executable path"/><Button Content="End selected process" Click="EndProcess_Click" Background="#70413F"/><Button Content="Refresh list" Click="Refresh_Click"/></StackPanel><DataGrid x:Name="ProcessesGrid" AutoGenerateColumns="False" IsReadOnly="True" Background="#191F2B" Foreground="#EAF0F7" RowBackground="#191F2B" AlternatingRowBackground="#202938" BorderThickness="0">
       <DataGrid.Columns>
        <DataGridTextColumn Header="Process" Binding="{Binding Name}" Width="2*"/>
        <DataGridTextColumn Header="PID" Binding="{Binding Id}" Width="*"/>
@@ -89,17 +89,17 @@
        <DataGridTextColumn Header="CPU time (s)" Binding="{Binding CpuSeconds, StringFormat=N1}" Width="*"/>
        <DataGridTextColumn Header="Executable path" Binding="{Binding FilePath}" Width="4*"/>
       </DataGrid.Columns>
-     </DataGrid>
+     </DataGrid></DockPanel>
     </Grid>
     <Grid x:Name="StartupPanel" Visibility="Collapsed">
-     <DataGrid x:Name="StartupGrid" AutoGenerateColumns="False" IsReadOnly="True" Background="#191F2B" Foreground="#EAF0F7" RowBackground="#191F2B" AlternatingRowBackground="#202938" BorderThickness="0">
+     <DockPanel><TextBox DockPanel.Dock="Top" x:Name="StartupSearch" Width="320" Height="32" HorizontalAlignment="Left" Margin="0,0,0,8" VerticalContentAlignment="Center" TextChanged="StartupSearch_Changed" ToolTip="Filter startup entries"/><DataGrid x:Name="StartupGrid" AutoGenerateColumns="False" IsReadOnly="True" Background="#191F2B" Foreground="#EAF0F7" RowBackground="#191F2B" AlternatingRowBackground="#202938" BorderThickness="0">
       <DataGrid.Columns>
        <DataGridTextColumn Header="Entry" Binding="{Binding Name}" Width="2*"/>
        <DataGridTextColumn Header="Location" Binding="{Binding Location}" Width="*"/>
        <DataGridTextColumn Header="Command" Binding="{Binding Command}" Width="4*"/>
        <DataGridTextColumn Header="Review" Binding="{Binding Risk}" Width="*"/>
       </DataGrid.Columns>
-     </DataGrid>
+     </DataGrid></DockPanel>
     </Grid>
     <Grid x:Name="JournalPanel" Visibility="Collapsed">
      <StackPanel>
