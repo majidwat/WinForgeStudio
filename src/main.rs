@@ -22,6 +22,7 @@ mod updates;
 mod firewall;
 mod restore_points;
 mod environment;
+mod process_control;
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
@@ -61,6 +62,12 @@ fn main() -> Result<(), slint::PlatformError> {
     let weak = ui.as_weak();
     refresh_async(weak.clone());
     ui.on_refresh_requested(move || refresh_async(weak.clone()));
+    let action_weak = ui.as_weak();
+    ui.on_terminate_process_requested(move |pid, expected_name| {
+        let status = match process_control::terminate(pid, &expected_name) { Ok(message) => message, Err(error) => format!("Action blocked/failed: {error}") };
+        if let Some(window) = action_weak.upgrade() { window.set_scan_status(status.into()); }
+        refresh_async(action_weak.clone());
+    });
     let export_weak = ui.as_weak();
     ui.on_export_requested(move || { if let Some(window) = export_weak.upgrade() { export_report(window.get_report_content().to_string(), export_weak.clone()); } });
     ui.run()
