@@ -55,7 +55,7 @@ pub fn remove_current_user_entry(name: &str) -> Result<String, String> {
     use winreg::{enums::{HKEY_CURRENT_USER, KEY_READ, KEY_WRITE}, RegKey};
     use std::{fs::OpenOptions, io::Write, path::PathBuf};
     let name=name.trim();
-    if name.is_empty() || name.len()>255 || name.contains(['\\\\','/','\\0']) { return Err("Invalid startup value name.".into()); }
+    if name.is_empty() || name.len()>255 || name.chars().any(|c| c=='\\' || c=='/' || c=='\0') { return Err("Invalid startup value name.".into()); }
     let root=RegKey::predef(HKEY_CURRENT_USER);
     let mut found=None;
     for sub in ["Software\\Microsoft\\Windows\\CurrentVersion\\Run","Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce","Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run","Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"] {
@@ -72,7 +72,7 @@ pub fn remove_current_user_entry(name: &str) -> Result<String, String> {
     let path=backup.join(format!("startup-registry-{safe}-{stamp}.txt"));
     let bytes=value.bytes.iter().map(|b|format!("{b:02X}")).collect::<String>();
     let mut file=OpenOptions::new().create_new(true).write(true).open(&path).map_err(|e|format!("Could not create backup: {e}"))?;
-    writeln!(file,"Key: HKCU\\{sub}\\nName: {name}\\nType: {:?}\\nDataHex: {bytes}",value.vtype).map_err(|e|e.to_string())?;
+    writeln!(file,"Key: HKCU\\{sub}\nName: {name}\nType: {:?}\nDataHex: {bytes}",value.vtype).map_err(|e|e.to_string())?;
     key.delete_value(name).map_err(|e|format!("Backup saved but registry removal failed: {e}"))?;
     if key.get_raw_value(name).is_ok(){return Err(format!("Backup saved at {}; removal could not be verified.",path.display()));}
     Ok(format!("Removed HKCU startup value '{name}'. Backup: {}",path.display()))
@@ -82,7 +82,7 @@ pub fn remove_current_user_entry(name: &str) -> Result<String, String> {
 pub fn remove_current_user_startup_file(name: &str) -> Result<String, String> {
     use std::path::{Path,PathBuf};
     let name=name.trim();
-    if name.is_empty() || name.contains(['\\\\','/','\\0']) || name=="." || name==".." {return Err("Enter a file name only, not a path.".into());}
+    if name.is_empty() || name.chars().any(|c| c=='\\' || c=='/' || c=='\0') || name=="." || name==".." {return Err("Enter a file name only, not a path.".into());}
     let appdata=std::env::var_os("APPDATA").ok_or("APPDATA is unavailable")?;
     let folder=PathBuf::from(appdata).join("Microsoft\\Windows\\Start Menu\\Programs\\Startup");
     let source=folder.join(name);
