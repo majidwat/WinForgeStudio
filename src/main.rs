@@ -243,7 +243,8 @@ fn apply_snapshot(ui: &MainWindow, data: InventorySnapshot) {
     ui.set_health_summary(data.health.into());
     ui.set_cleanup_count(data.cleanup.0.into());
     ui.set_cleanup_items(data.cleanup.1.into());
-    ui.set_report_content(report.into());\n    ui.set_cleanup_count(data.cleanup.0.into());
+    ui.set_report_content(report.into());
+    ui.set_cleanup_count(data.cleanup.0.into());
     ui.set_cleanup_items(data.cleanup.1.into());
 }
 
