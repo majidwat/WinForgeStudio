@@ -64,8 +64,8 @@ public sealed class ServiceManager
             throw new InvalidOperationException("The service startup value did not verify after writing.");
     }
 
-    public void Start(string name) => WithService(name, service => { service.Start(); service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(15)); });
-    public void Stop(string name) => WithService(name, service => { service.Stop(); service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(15)); });
+    public void Start(string name) => WithService(name, service => { if (service.Status == ServiceControllerStatus.Running) return; service.Start(); service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(15)); });
+    public void Stop(string name) => WithService(name, service => { if (service.Status == ServiceControllerStatus.Stopped) return; service.Stop(); service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(15)); });
 
     private static void WithService(string name, Action<ServiceController> action)
     {
