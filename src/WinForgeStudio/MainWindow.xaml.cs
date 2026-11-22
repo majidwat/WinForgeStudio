@@ -77,8 +77,8 @@ public partial class MainWindow : Window
         ServicesGrid.ItemsSource = _vm.FilteredServices;
     }
 
-    private void StartService_Click(object sender, RoutedEventArgs e) => _vm.StartService(ServicesGrid.SelectedItem as ServiceInfo);
-    private void StopService_Click(object sender, RoutedEventArgs e) => _vm.StopService(ServicesGrid.SelectedItem as ServiceInfo);
+    private void StartService_Click(object sender, RoutedEventArgs e) => _ = _vm.StartServiceAsync(ServicesGrid.SelectedItem as ServiceInfo);
+    private void StopService_Click(object sender, RoutedEventArgs e) => _ = _vm.StopServiceAsync(ServicesGrid.SelectedItem as ServiceInfo);
     private void Manual_Click(object sender, RoutedEventArgs e) => _vm.ChangeStartup(ServicesGrid.SelectedItem as ServiceInfo, "Manual");
     private void Automatic_Click(object sender, RoutedEventArgs e) => _vm.ChangeStartup(ServicesGrid.SelectedItem as ServiceInfo, "Automatic");
     private void Disable_Click(object sender, RoutedEventArgs e) => _vm.ChangeStartup(ServicesGrid.SelectedItem as ServiceInfo, "Disabled");
