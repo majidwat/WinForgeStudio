@@ -54,7 +54,7 @@ public partial class MainWindow : Window
         DetailsValue.Text =
             $"Computer: {s.ComputerName}\nWindows: {s.WindowsCaption}\nVersion / Build: {s.Version} / {s.Build}\n" +
             $"Architecture: {s.Architecture}\nCPU: {s.CpuName}\nLogical processors: {s.LogicalProcessors}\n" +
-            $"RAM: {s.TotalRamGb:N2} GB installed\nSystem drive: {s.SystemDrive} | {s.DriveFreeGb:N1} GB free of {s.DriveTotalGb:N1} GB\n" +
+            $"RAM: {s.TotalRamGb:N2} GB installed, {s.AvailableRamGb:N2} GB available\nSystem drive: {s.SystemDrive} | {s.DriveFreeGb:N1} GB free of {s.DriveTotalGb:N1} GB\n" +
             $"Administrator: {(s.IsAdministrator ? "Yes" : "No")}";
     }
 
