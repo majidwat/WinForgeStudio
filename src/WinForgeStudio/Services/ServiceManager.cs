@@ -43,8 +43,8 @@ public sealed class ServiceManager
         var service = GetServices().FirstOrDefault(s => s.Name == serviceName)
             ?? throw new InvalidOperationException("Service not found.");
 
-        if (service.Risk == "Critical" && startType == "Disabled")
-            throw new InvalidOperationException("WinForge blocked disabling a critical service.");
+        if (startType == "Disabled" && service.Risk != "Low")
+            throw new InvalidOperationException("WinForge only permits disabling services classified Low risk; this service is not.");
 
         using var key = Registry.LocalMachine.OpenSubKey(
             $@"SYSTEM\CurrentControlSet\Services\{serviceName}", writable: true)
@@ -64,8 +64,8 @@ public sealed class ServiceManager
             throw new InvalidOperationException("The service startup value did not verify after writing.");
     }
 
-    public void Start(string name) => WithService(name, service => service.Start());
-    public void Stop(string name) => WithService(name, service => service.Stop());
+    public void Start(string name) => WithService(name, service => { service.Start(); service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(15)); });
+    public void Stop(string name) => WithService(name, service => { service.Stop(); service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(15)); });
 
     private static void WithService(string name, Action<ServiceController> action)
     {
