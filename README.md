@@ -17,6 +17,9 @@ The executable is `target/release/winforge-studio.exe`; portable ZIP is `target/
 - Dashboard, system information, process snapshot
 - Read-only inventory pages for services, startup, network, storage, apps, drivers, tasks, event logs, updates, firewall, restore points, environment (with secret redaction), security, battery, activation, adapters, boot, power, device health, hardware, privacy, and cleanup preview
 - Background inventory scanning and local report export
+- Process termination with explicit confirmation, exact PID/image-name identity checks, protected-process denylist, and action journal
+- Service start/stop and Manual/Automatic startup-mode controls with core-service protection, confirmation, state verification, and action journal
+- Current-user Startup Run/RunOnce value and Startup-folder file removal with backup-before-delete
 
 This is a native Rust/Slint application. All pages are rendered in Slint; Windows inventory uses Rust modules and Windows-native/command-based interfaces. Not all inventory modules expose modification controls yet.
 
