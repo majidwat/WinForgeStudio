@@ -1,44 +1,38 @@
 # WinForge Studio
 
-A lightweight Windows 10/11 system-inspection utility built with Rust and Slint.
+A lightweight Windows 10/11 system-inspection and maintenance utility.
 
-## Current preview
+## Active Windows application
 
-The active Rust + Slint application provides read-only views for:
-- System overview, CPU, RAM, uptime and top 20 memory-consuming processes (PID, RAM and CPU usage)
-- Windows services and startup registry entries plus current-user/all-users Startup folders
-- Network configuration/adapters; physical disks and volumes
-- Installed applications, signed device drivers and scheduled tasks
-- Recent System event warnings/errors, installed hotfixes and firewall profiles/rules
-- Existing restore points and environment variables (secret-like values redacted)
-- Read-only temporary-folder cleanup size preview (never deletes files)
-- Defender/UAC status, battery, Windows licensing and current boot entry
-- Power schemes, Plug and Play problem devices, motherboard/BIOS/graphics hardware
-- Windows privacy policy and app-consent indicators
+The downloadable Windows artifacts now build the WPF application in `src/WinForgeStudio` (the application with interactive service and process controls), rather than packaging the earlier Rust/Slint inspection-only shell.
 
-Inventory collection runs on a worker thread. Refresh scans are serialized, the sidebar and module content are scrollable, and command output is capped before display.
+Current functional modules:
+- System overview (Windows, CPU, memory, system drive)
+- Services: searchable inventory and startup-mode controls (Manual, Automatic, Disabled), with risk warning and local change journal
+- Processes: searchable process list with PID, RAM, CPU time and executable path; selected-process termination with confirmation and identity re-check
+- Startup inventory: filter by name, command, and source
+- Change journal path and safety information
+- Local text report export for the active inventory
 
-The legacy WPF source under `src/WinForgeStudio` is retained for reference. The active preview is Rust + Slint.
+The application does not auto-elevate. Service registry changes may require administrator permissions. Ending a process can discard unsaved work. Critical Windows services are protected from disable actions.
 
-## Navigation
+## Build on Windows
 
-Use the sidebar to open inspection modules. Dashboard cards summarize OS, CPU, RAM, process count and uptime. Select Refresh to rerun the read-only inventory; refresh is ignored while a scan is running. Use Export report to save the latest inventory locally as a text report. Settings explains privacy and safety behavior.
-
-## Build
-
-On Windows with stable Rust:
+Install .NET 8 SDK and run:
 
 ```powershell
-cargo test --all-targets
-cargo build --release
+dotnet build src/WinForgeStudio/WinForgeStudio.csproj -c Release
+dotnet publish src/WinForgeStudio/WinForgeStudio.csproj -c Release -r win-x64 --self-contained true
 ```
 
-GitHub Actions runs tests and the release build on `windows-latest`, then publishes both `WinForgeStudio-windows` (executable) and `WinForgeStudio-portable` (ZIP with docs) artifacts, each with 14-day retention. This is an unsigned preview binary, not an installer.
+GitHub Actions tests/builds the Rust inventory modules and publishes the active WPF application as `WinForgeStudio-windows` (standalone EXE) and `WinForgeStudio-portable` (ZIP with executable and docs), with 14-day artifact retention. The EXE is unsigned; it is not an installer.
+
+## Rust inspection modules
+
+The root Rust + Slint implementation is retained as a separate read-only inventory preview. Its modules include network, storage, apps, drivers, scheduled tasks, events, updates, firewall, restore points, environment redaction, security, battery, activation, adapters, boot, power, device health, hardware, privacy, and cleanup preview.
 
 ## Safety
 
-The preview is inspection-only. It does not disable services, alter startup entries, modify firewall rules, change boot configuration, remove applications, or change Windows security settings. Results may be partial depending on Windows edition, permissions, hardware, or available PowerShell modules. The app never elevates itself automatically.
+No silent system changes or auto-elevation. Service changes require explicit confirmation and are journaled. The preview modules are read-only. Results may be partial depending on Windows version, permissions, hardware, or installed components.
 
-Future system-changing operations require preview, explicit confirmation, risk explanation, a durable journal, post-change verification and a recovery path. Defender, Firewall, Windows Update, UAC and core Windows services must never be silently weakened.
-
-See the [manual smoke-test checklist](docs/SMOKE_TEST.md). See [AGENTS.md](AGENTS.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/SECURITY_MODEL.md](docs/SECURITY_MODEL.md), and [docs/BUILD.md](docs/BUILD.md).
+See `SECURITY.md`, `docs/SECURITY_MODEL.md`, `docs/SMOKE_TEST.md`, and `docs/BUILD.md`.
