@@ -13,8 +13,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         ServicesGrid.ItemsSource = _vm.FilteredServices;
-        ProcessesGrid.ItemsSource = _vm.Processes;
-        StartupGrid.ItemsSource = _vm.Startup;
+        ProcessesGrid.ItemsSource = _vm.FilteredProcesses;
+        StartupGrid.ItemsSource = _vm.FilteredStartup;
         JournalPathText.Text = _vm.JournalPath;
 
         Loaded += (_, _) => { _vm.Refresh(); UpdateOverview(); };
@@ -22,8 +22,9 @@ public partial class MainWindow : Window
         {
             if (e.PropertyName == nameof(MainViewModel.Status))
                 StatusText.Text = _vm.Status;
-            if (e.PropertyName == nameof(MainViewModel.FilteredServices))
-                ServicesGrid.ItemsSource = _vm.FilteredServices;
+            if (e.PropertyName == nameof(MainViewModel.FilteredServices)) ServicesGrid.ItemsSource = _vm.FilteredServices;
+            if (e.PropertyName == nameof(MainViewModel.FilteredProcesses)) ProcessesGrid.ItemsSource = _vm.FilteredProcesses;
+            if (e.PropertyName == nameof(MainViewModel.FilteredStartup)) StartupGrid.ItemsSource = _vm.FilteredStartup;
         };
     }
 
@@ -81,6 +82,22 @@ public partial class MainWindow : Window
     private void Manual_Click(object sender, RoutedEventArgs e) => _vm.ChangeStartup(ServicesGrid.SelectedItem as ServiceInfo, "Manual");
     private void Automatic_Click(object sender, RoutedEventArgs e) => _vm.ChangeStartup(ServicesGrid.SelectedItem as ServiceInfo, "Automatic");
     private void Disable_Click(object sender, RoutedEventArgs e) => _vm.ChangeStartup(ServicesGrid.SelectedItem as ServiceInfo, "Disabled");
+
+
+    private void ProcessSearch_Changed(object sender, TextChangedEventArgs e)
+    {
+        if (!IsInitialized) return;
+        _vm.ProcessSearch = ProcessSearch.Text;
+        ProcessesGrid.ItemsSource = _vm.FilteredProcesses;
+    }
+    private void StartupSearch_Changed(object sender, TextChangedEventArgs e)
+    {
+        if (!IsInitialized) return;
+        _vm.StartupSearch = StartupSearch.Text;
+        StartupGrid.ItemsSource = _vm.FilteredStartup;
+    }
+    private void EndProcess_Click(object sender, RoutedEventArgs e) => _vm.EndProcess(ProcessesGrid.SelectedItem as ProcessInfo);
+    private void Export_Click(object sender, RoutedEventArgs e) => _vm.ExportReport();
 
     private void Language_Changed(object sender, SelectionChangedEventArgs e)
     {
