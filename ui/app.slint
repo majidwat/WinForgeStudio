@@ -70,6 +70,8 @@ export component MainWindow inherits Window {
     in-out property <string> service_start_mode: "Manual";
     in-out property <bool> confirm_service_mode: false;
     callback startup-remove-requested(string, bool);
+    callback startup-restore-requested(string);
+    in-out property <string> startup_backup_name: "";
     in-out property <string> startup_entry_name: "";
     in-out property <bool> confirm_startup_remove: false;
     in-out property <bool> startup_remove_registry: true;
@@ -198,6 +200,10 @@ export component MainWindow inherits Window {
                         Button { text: "Cancel"; clicked => { confirm_startup_remove = false; } }
                     }
                 } }
+                HorizontalLayout { spacing: 8px;
+                    LineEdit { width: 260px; placeholder-text: "Exact backup file name"; text <=> startup_backup_name; }
+                    Button { text: "Restore Startup file backup"; clicked => { startup-restore-requested(startup_backup_name); } }
+                }
                 Text { text: startup_items; color: #d6e0eb; font-size: 12px; }
             } }
             if active_page == 5: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Network configuration"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only output from Windows ipconfig /all"; color: #9fb0c4; font-size: 12px; } Text { text: network_items; color: #d6e0eb; font-size: 11px; } } }
