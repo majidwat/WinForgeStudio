@@ -14,7 +14,9 @@ fn validate_name(name:&str)->Result<String,String>{
     if n.is_empty() || n.len()>128 || !n.chars().all(|c|c.is_ascii_alphanumeric()||c=='_'||c=='-') { return Err("Enter a valid Windows service name (letters, numbers, _ or -).".into()); }
     let lower=n.to_ascii_lowercase();
     let protected=["rpcss","dcomlaunch","plugplay","eventlog","winmgmt","cryptsvc","bits","wuauserv","mpssvc","windefend","samss","lanmanworkstation","lanmanserver","schedule","power","profsvc","gpsvc","lsass","trustedinstaller"];
-    if protected.contains(&lower.as_str()) { return Err(format!("Service '{n}' is protected by WinForge safety policy.")); }
+    if protected.contains(&lower.as_str()) { return Err(format!("Service '{}' is protected by WinForge safety policy.", n)); }
+    let low_risk=["spooler","wsearch","sysmain","fax","wersvc"];
+    if !low_risk.contains(&lower.as_str()) { return Err(format!("Service '{}' is not in WinForge's conservative low-risk allowlist; no change was made.", n)); }
     Ok(n.to_string())
 }
 
@@ -48,7 +50,7 @@ pub fn set_running(name:&str,start:bool)->Result<String,String>{
 mod tests{
  use super::*;
  #[test] fn blocks_core_services(){assert!(validate_name("WinDefend").is_err());assert!(validate_name("RpcSs").is_err());}
- #[test] fn validates_service_names(){assert!(validate_name("Spooler").is_ok());assert!(validate_name("bad name").is_err());assert!(validate_name("x;shutdown").is_err());}
+ #[test] fn validates_service_names(){assert!(validate_name("Spooler").is_ok());assert!(validate_name("LanmanWorkstation").is_err());assert!(validate_name("bad name").is_err());assert!(validate_name("x;shutdown").is_err());}
 }
 
 /// Change only between Manual and Automatic. Disabling services is intentionally unsupported.
