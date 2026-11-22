@@ -92,7 +92,7 @@
      </DataGrid></DockPanel>
     </Grid>
     <Grid x:Name="StartupPanel" Visibility="Collapsed">
-     <DockPanel><TextBox DockPanel.Dock="Top" x:Name="StartupSearch" Width="320" Height="32" HorizontalAlignment="Left" Margin="0,0,0,8" VerticalContentAlignment="Center" TextChanged="StartupSearch_Changed" ToolTip="Filter startup entries"/><DataGrid x:Name="StartupGrid" AutoGenerateColumns="False" IsReadOnly="True" Background="#191F2B" Foreground="#EAF0F7" RowBackground="#191F2B" AlternatingRowBackground="#202938" BorderThickness="0">
+     <DockPanel><TextBox DockPanel.Dock="Top" x:Name="StartupSearch" Width="320" Height="32" HorizontalAlignment="Left" Margin="0,0,0,8" VerticalContentAlignment="Center" TextChanged="StartupSearch_Changed" ToolTip="Filter startup entries"/><Button DockPanel.Dock="Top" Content="Remove selected entry" Click="RemoveStartup_Click" Background="#70413F" Margin="0,0,0,8"/><DataGrid x:Name="StartupGrid" AutoGenerateColumns="False" IsReadOnly="True" Background="#191F2B" Foreground="#EAF0F7" RowBackground="#191F2B" AlternatingRowBackground="#202938" BorderThickness="0">
       <DataGrid.Columns>
        <DataGridTextColumn Header="Entry" Binding="{Binding Name}" Width="2*"/>
        <DataGridTextColumn Header="Location" Binding="{Binding Location}" Width="*"/>
