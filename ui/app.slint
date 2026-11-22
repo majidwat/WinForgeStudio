@@ -65,6 +65,10 @@ export component MainWindow inherits Window {
     in-out property <int> active_page: 0;
     callback refresh-requested();
     callback terminate-process-requested(string, string);
+    callback service-action-requested(string, bool);
+    in-out property <string> service_name_text: "";
+    in-out property <bool> confirm_service_action: false;
+    in-out property <bool> service_action_start: true;
     in-out property <string> process_pid_text: "";
     in-out property <string> process_name_text: "";
     in-out property <bool> confirm_termination: false;
@@ -146,7 +150,23 @@ export component MainWindow inherits Window {
                 Text { text: "Top processes by memory usage"; color: #9fb0c4; font-size: 12px; }
                 Text { text: top_processes; color: #d6e0eb; font-size: 13px; }
             } }
-            if active_page == 3: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Windows services · " + service_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only inventory · Refresh to query current state"; color: #9fb0c4; font-size: 12px; } Text { text: service_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 3: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px;
+                Text { text: "Windows services · " + service_count; color: #f0f4f9; font-size: 18px; font-weight: 700; }
+                Text { text: "Enter the exact service Name (not Display Name). Core Windows services are blocked. Changes are journaled and verified."; color: #9fb0c4; font-size: 12px; }
+                HorizontalLayout { spacing: 8px;
+                    LineEdit { width: 220px; placeholder-text: "Service name e.g. Spooler"; text <=> service_name_text; }
+                    Button { text: "Start"; clicked => { service_action_start = true; confirm_service_action = true; } }
+                    Button { text: "Stop"; clicked => { service_action_start = false; confirm_service_action = true; } }
+                }
+                if confirm_service_action: Rectangle { background: #382b22; border-radius: 8px; padding: 10px; VerticalLayout { spacing: 8px;
+                    Text { text: "Confirm " + (service_action_start ? "starting" : "stopping") + " service '" + service_name_text + "'?"; color: #ffe0bf; }
+                    HorizontalLayout { spacing: 8px;
+                        Button { text: "Confirm action"; clicked => { service-action-requested(service_name_text, service_action_start); confirm_service_action = false; } }
+                        Button { text: "Cancel"; clicked => { confirm_service_action = false; } }
+                    }
+                } }
+                Text { text: service_items; color: #d6e0eb; font-size: 11px; }
+            } }
             if active_page == 4: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px; Text { text: "Startup entries · " + startup_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only inventory from Run and RunOnce registry keys. No changes are made."; color: #9fb0c4; font-size: 12px; } Text { text: startup_items; color: #d6e0eb; font-size: 12px; } } }
             if active_page == 5: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Network configuration"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only output from Windows ipconfig /all"; color: #9fb0c4; font-size: 12px; } Text { text: network_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 6: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Storage overview"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Physical disks and volumes · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: storage_items; color: #d6e0eb; font-size: 11px; } } }
