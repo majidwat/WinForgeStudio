@@ -9,7 +9,7 @@ public sealed class SystemInspector
 {
     public SystemSnapshot GetSnapshot()
     {
-        using var os = new ManagementObjectSearcher("SELECT Caption, Version, BuildNumber FROM Win32_OperatingSystem");
+        using var os = new ManagementObjectSearcher("SELECT Caption, Version, BuildNumber, FreePhysicalMemory FROM Win32_OperatingSystem");
         using var cpu = new ManagementObjectSearcher("SELECT Name, NumberOfLogicalProcessors FROM Win32_Processor");
         using var computer = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem");
         using var osRows = os.Get();
@@ -21,7 +21,7 @@ public sealed class SystemInspector
 
         var drive = new DriveInfo(Environment.GetFolderPath(Environment.SpecialFolder.System)[..2]);
         var total = Convert.ToDouble(m?["TotalPhysicalMemory"] ?? 0UL) / 1024 / 1024 / 1024;
-        var available = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / 1024d / 1024 / 1024;
+        var available = Convert.ToDouble(o?["FreePhysicalMemory"] ?? 0d) / 1024 / 1024;
 
         return new SystemSnapshot(
             Environment.MachineName, S(o?["Caption"]), S(o?["Version"]), S(o?["BuildNumber"]),
