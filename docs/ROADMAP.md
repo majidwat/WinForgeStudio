@@ -1,35 +1,22 @@
-# Roadmap
+# Roadmap (Rust + Slint only)
 
-## Active WPF application features
-- [x] System overview (Windows version/build, CPU, RAM, system drive)
-- [x] Service inventory with filtering, risk labels, startup-mode changes and journal
-- [x] Service start/stop with confirmation and state-transition wait
-- [x] Critical service protections and reviewed Low-risk disable allowlist
-- [x] Process inventory with PID, memory, CPU time and executable path
-- [x] Process filtering and confirmed termination with PID/name re-check
-- [x] Startup inventory and filtering for Run registry entries and user Startup folder
-- [x] Confirmed startup entry removal; local backup for user Startup-folder files and journaled registry removal
-- [x] Local text report export
-- [x] Background inventory scans to keep UI responsive
-- [x] WPF application is built and published as the Windows artifact in CI
+## Native application
+- [x] Slint UI navigation and dashboard
+- [x] Rust system snapshot and process inventory
+- [x] Read-only Windows inventory modules
+- [x] Background scan and local report export
+- [x] Portable ZIP packaging and Windows CI artifacts
 
-## Next functional development
-- [ ] Startup entry restore workflow (restore backup file and re-create registry values)
-- [ ] Service dependency view and service-state recovery
-- [ ] Process detail view (publisher/signature, command line, parent PID, network connections where supported)
-- [ ] Disk and storage cleanup with explicit preview, selection, backup/recycle-bin safety and confirmation
-- [ ] Installed-app uninstall integration with explicit confirmation and official uninstall command only
-- [ ] Network connection/adapter diagnostics with actionable but safe repair workflows
-- [ ] Module error states, per-module timestamps and progress/cancellation
+## Functional migration / development
+- [ ] Migrate interactive process actions into Rust with Slint-selected PID, confirmation and identity checks
+- [ ] Service filtering, start/stop, startup-type control, risk policy, journal and recovery in Rust/Slint
+- [ ] Startup entry filtering, removal, backup and restore in Rust/Slint
+- [ ] Structured interactive tables (not only text output), per-module loading/error states and scan timestamps
+- [ ] Storage cleanup: selectable preview, size calculation, safety checks, confirmation, recovery strategy
+- [ ] Installed-app management via supported uninstall commands and confirmation
+- [ ] Network diagnostics with safe repair options
 - [ ] Persian localization and RTL
-- [ ] Windows 10/11 manual test matrix and signed release installer
+- [ ] Windows 10/11 smoke test, signed installer
 
-## Retained Rust + Slint read-only preview
-- [x] Dashboard and OS/CPU/RAM/process snapshot
-- [x] Read-only system inventory modules and bounded output
-- [x] Worker-thread scans and local report export
-
-## Safety policy
-- No auto-elevation, silent changes, registry cleaning, driver deletion, or undocumented debloating.
-- Defender, Firewall, Windows Update, UAC, and core Windows services must never be weakened automatically.
-- Every system-changing operation needs a preview, explicit confirmation, durable journal, post-change verification, and a recovery path.
+## Safety requirements
+No automatic elevation, silent destructive changes, registry cleaning, driver deletion, or undocumented debloating. Defender, Firewall, Windows Update, UAC and core services must not be weakened automatically. Every mutation must require explicit confirmation, journal before execution, verify outcome, and provide a recovery path.
