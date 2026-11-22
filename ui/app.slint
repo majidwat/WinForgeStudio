@@ -66,6 +66,9 @@ export component MainWindow inherits Window {
     callback refresh-requested();
     callback terminate-process-requested(string, string);
     callback service-action-requested(string, bool);
+    callback service-start-mode-requested(string, string);
+    in-out property <string> service_start_mode: "Manual";
+    in-out property <bool> confirm_service_mode: false;
     callback startup-remove-requested(string, bool);
     in-out property <string> startup_entry_name: "";
     in-out property <bool> confirm_startup_remove: false;
@@ -161,7 +164,16 @@ export component MainWindow inherits Window {
                     LineEdit { width: 220px; placeholder-text: "Service name e.g. Spooler"; text <=> service_name_text; }
                     Button { text: "Start"; clicked => { service_action_start = true; confirm_service_action = true; } }
                     Button { text: "Stop"; clicked => { service_action_start = false; confirm_service_action = true; } }
+                    Button { text: "Set Manual"; clicked => { service_start_mode = "Manual"; confirm_service_mode = true; } }
+                    Button { text: "Set Automatic"; clicked => { service_start_mode = "Automatic"; confirm_service_mode = true; } }
                 }
+                if confirm_service_mode: Rectangle { background: #382b22; border-radius: 8px; padding: 10px; VerticalLayout { spacing: 8px;
+                    Text { text: "Set '" + service_name_text + "' startup mode to " + service_start_mode + "? Disabled mode is intentionally unavailable."; color: #ffe0bf; }
+                    HorizontalLayout { spacing: 8px;
+                        Button { text: "Confirm startup mode"; clicked => { service-start-mode-requested(service_name_text, service_start_mode); confirm_service_mode = false; } }
+                        Button { text: "Cancel"; clicked => { confirm_service_mode = false; } }
+                    }
+                } }
                 if confirm_service_action: Rectangle { background: #382b22; border-radius: 8px; padding: 10px; VerticalLayout { spacing: 8px;
                     Text { text: "Confirm " + (service_action_start ? "starting" : "stopping") + " service '" + service_name_text + "'?"; color: #ffe0bf; }
                     HorizontalLayout { spacing: 8px;
