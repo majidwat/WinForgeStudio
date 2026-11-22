@@ -64,6 +64,12 @@ fn main() -> Result<(), slint::PlatformError> {
     refresh_async(weak.clone());
     ui.on_refresh_requested(move || refresh_async(weak.clone()));
     let action_weak = ui.as_weak();
+    ui.on_startup_remove_requested(move |name, registry_value| {
+        let outcome = if registry_value { startup::remove_current_user_entry(&name) } else { startup::remove_current_user_startup_file(&name) };
+        let status = match outcome { Ok(message) => message, Err(error) => format!("Startup action blocked/failed: {error}") };
+        if let Some(window) = action_weak.upgrade() { window.set_scan_status(status.into()); }
+        refresh_async(action_weak.clone());
+    });
     ui.on_service_action_requested(move |name, start| {
         let status = match service_control::set_running(&name, start) { Ok(message) => message, Err(error) => format!("Service action blocked/failed: {error}") };
         if let Some(window) = action_weak.upgrade() { window.set_scan_status(status.into()); }
