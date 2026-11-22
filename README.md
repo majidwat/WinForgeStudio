@@ -11,7 +11,7 @@ cargo build --release
 .\package.ps1
 ```
 
-The executable is `target/release/winforge-studio.exe`; portable ZIP is `target/release/WinForgeStudio-portable.zip`. GitHub Actions builds the Rust/Slint executable and uploads both artifacts for 14 days.
+The executable is `target/release/winforge-studio.exe`; portable ZIP is `target/release/WinForgeStudio-portable.zip`. The Windows build workflow is manual-only (`workflow_dispatch`) while implementation is in progress; it uploads both artifacts when explicitly run.
 
 ## Current implementation
 - Dashboard, system information, process snapshot
