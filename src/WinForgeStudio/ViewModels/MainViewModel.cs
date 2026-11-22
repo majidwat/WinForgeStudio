@@ -26,7 +26,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public IEnumerable<StartupInfo> FilteredStartup => Startup.Where(s => string.IsNullOrWhiteSpace(StartupSearch) || s.Name.Contains(StartupSearch, StringComparison.OrdinalIgnoreCase) || s.Command.Contains(StartupSearch, StringComparison.OrdinalIgnoreCase) || s.Location.Contains(StartupSearch, StringComparison.OrdinalIgnoreCase));
     public SystemSnapshot? Snapshot { get; private set; }
 
-    public string Status { get => _status; set { _status = value; OnChanged(); } }
+    public string Status { get => _status; set { _status = value; if (Application.Current.Dispatcher.CheckAccess()) OnChanged(); else Application.Current.Dispatcher.BeginInvoke(() => OnChanged()); } }
     public string Search { get => _search; set { _search = value; OnChanged(); OnChanged(nameof(FilteredServices)); } }
     public string ProcessSearch { get => _processSearch; set { _processSearch = value; OnChanged(); OnChanged(nameof(FilteredProcesses)); } }
     public string StartupSearch { get => _startupSearch; set { _startupSearch = value; OnChanged(); OnChanged(nameof(FilteredStartup)); } }
