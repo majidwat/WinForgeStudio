@@ -8,9 +8,11 @@
 - [x] Portable ZIP packaging and Windows CI artifacts
 
 ## Functional migration / development
-- [ ] Migrate interactive process actions into Rust with Slint-selected PID, confirmation and identity checks
-- [ ] Service filtering, start/stop, startup-type control, risk policy, journal and recovery in Rust/Slint
-- [ ] Startup entry filtering, removal, backup and restore in Rust/Slint
+- [x] Process termination in Rust/Slint with explicit confirmation, PID/image identity checks, protected-process denylist and journal
+- [x] Service start/stop and Manual/Automatic startup mode controls with core-service denylist, explicit confirmation, verification and journal
+- [ ] Service filtering and full risk classification/recovery UI
+- [x] Current-user Run/RunOnce and Startup-folder removal with backup-before-delete
+- [ ] Startup filtering and one-click restore workflow
 - [ ] Structured interactive tables (not only text output), per-module loading/error states and scan timestamps
 - [ ] Storage cleanup: selectable preview, size calculation, safety checks, confirmation, recovery strategy
 - [ ] Installed-app management via supported uninstall commands and confirmation
