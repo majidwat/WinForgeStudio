@@ -73,8 +73,10 @@ pub fn remove_current_user_entry(name: &str) -> Result<String, String> {
     let bytes=value.bytes.iter().map(|b|format!("{b:02X}")).collect::<String>();
     let mut file=OpenOptions::new().create_new(true).write(true).open(&path).map_err(|e|format!("Could not create backup: {e}"))?;
     writeln!(file,"Key: HKCU\\{sub}\nName: {name}\nType: {:?}\nDataHex: {bytes}",value.vtype).map_err(|e|e.to_string())?;
+    journal_startup_action(&format!("REQUEST startup-registry-remove key=HKCU\\{sub} name={name} backup={}",path.display()))?;
     key.delete_value(name).map_err(|e|format!("Backup saved but registry removal failed: {e}"))?;
     if key.get_raw_value(name).is_ok(){return Err(format!("Backup saved at {}; removal could not be verified.",path.display()));}
+    journal_startup_action(&format!("SUCCESS startup-registry-remove name={name} backup={}",path.display()))?;
     Ok(format!("Removed HKCU startup value '{name}'. Backup: {}",path.display()))
 }
 
@@ -94,8 +96,10 @@ pub fn remove_current_user_startup_file(name: &str) -> Result<String, String> {
     if destination.exists(){let stamp=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_err(|e|e.to_string())?.as_secs();destination=backup.join(format!("{stamp}-{}",name));}
     std::fs::copy(&source,&destination).map_err(|e|format!("Could not back up startup file: {e}"))?;
     if !Path::new(&destination).is_file(){return Err("Backup verification failed; original was not removed.".into());}
+    journal_startup_action(&format!("REQUEST startup-file-remove name={name} backup={}",destination.display()))?;
     std::fs::remove_file(&source).map_err(|e|format!("Backup exists at {}; removal failed: {e}",destination.display()))?;
     if source.exists(){return Err(format!("Backup exists at {}; removal could not be verified.",destination.display()));}
+    journal_startup_action(&format!("SUCCESS startup-file-remove name={name} backup={}",destination.display()))?;
     Ok(format!("Removed startup file '{name}'. Backup: {}",destination.display()))
 }
 
@@ -119,7 +123,19 @@ pub fn restore_current_user_startup_file(backup_name:&str)->Result<String,String
     if destination.exists(){return Err("A Startup item with this name already exists; restore cancelled to avoid overwrite.".into());}
     std::fs::copy(&backup,&destination).map_err(|e|format!("Restore failed: {e}"))?;
     if !destination.is_file(){return Err("Restore could not be verified.".into());}
+    journal_startup_action(&format!("SUCCESS startup-file-restore name={name} source={}",backup.display()))?;
     Ok(format!("Restored '{name}' to the current-user Startup folder."))
 }
 #[cfg(not(windows))]
 pub fn restore_current_user_startup_file(_: &str)->Result<String,String>{Err("Available only on Windows.".into())}
+
+#[cfg(windows)]
+fn journal_startup_action(message:&str)->Result<(),String>{
+    use std::{fs::OpenOptions,io::Write,path::PathBuf};
+    let profile=std::env::var_os("USERPROFILE").ok_or("User profile unavailable")?;
+    let dir=PathBuf::from(profile).join("Documents").join("WinForge Studio").join("Journal");
+    std::fs::create_dir_all(&dir).map_err(|e|e.to_string())?;
+    let mut f=OpenOptions::new().create(true).append(true).open(dir.join("actions.log")).map_err(|e|e.to_string())?;
+    let stamp=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d|d.as_secs()).unwrap_or(0);
+    writeln!(f,"{stamp} | {message}").map_err(|e|e.to_string())
+}
