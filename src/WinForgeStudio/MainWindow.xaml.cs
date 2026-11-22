@@ -48,7 +48,7 @@ public partial class MainWindow : Window
     {
         if (_vm.Snapshot is not { } s) return;
         WindowsValue.Text = $"{s.WindowsCaption} • {s.Build}";
-        RamValue.Text = $"{s.TotalRamGb:N1} GB";
+        RamValue.Text = $"{Math.Max(0, s.TotalRamGb - s.AvailableRamGb):N1} / {s.TotalRamGb:N1} GB";
         CpuValue.Text = s.LogicalProcessors.ToString();
         DiskValue.Text = $"{s.DriveFreeGb:N1} GB";
         DetailsValue.Text =
