@@ -1,4 +1,4 @@
-import { Button, ScrollView } from "std-widgets.slint";
+import { Button, LineEdit, ScrollView } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
     title: "WinForge Studio";
@@ -64,6 +64,10 @@ export component MainWindow inherits Window {
     in-out property <string> ram_percent: "—";
     in-out property <int> active_page: 0;
     callback refresh-requested();
+    callback terminate-process-requested(string, string);
+    in-out property <string> process_pid_text: "";
+    in-out property <string> process_name_text: "";
+    in-out property <bool> confirm_termination: false;
 
     Rectangle { background: #10151d; }
     HorizontalLayout {
@@ -122,7 +126,26 @@ export component MainWindow inherits Window {
                 Rectangle { height: 64px; border-radius: 8px; background: #1a222d; VerticalLayout { padding: 12px; Text { text: "Memory"; color: #8396ad; font-size: 11px; } Text { text: ram_used + " used of " + ram_total; color: #f0f4f9; font-size: 17px; } Text { text: ram_percent + " utilization"; color: #80b5ef; font-size: 12px; } } }
                 Rectangle { height: 64px; border-radius: 8px; background: #1a222d; VerticalLayout { padding: 12px; Text { text: "System uptime"; color: #8396ad; font-size: 11px; } Text { text: uptime; color: #f0f4f9; font-size: 17px; } } }
             }
-            if active_page == 2: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px; Text { text: "Running processes · " + process_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Top processes by memory usage (read-only snapshot)"; color: #9fb0c4; font-size: 12px; } Text { text: top_processes; color: #d6e0eb; font-size: 13px; } } }
+            if active_page == 2: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px;
+                Text { text: "Running processes · " + process_count; color: #f0f4f9; font-size: 18px; font-weight: 700; }
+                Text { text: "Find the exact PID and image name in the inventory below. Termination requires a second explicit confirmation."; color: #9fb0c4; font-size: 12px; }
+                HorizontalLayout { spacing: 8px;
+                    Text { text: "PID"; color: #d6e0eb; vertical-alignment: center; }
+                    LineEdit { width: 110px; placeholder-text: "PID"; text <=> process_pid_text; }
+                    Text { text: "Exact image name"; color: #d6e0eb; vertical-alignment: center; }
+                    LineEdit { width: 180px; placeholder-text: "e.g. app.exe"; text <=> process_name_text; }
+                    Button { text: "Review termination"; clicked => { confirm_termination = true; } }
+                }
+                if confirm_termination: Rectangle { background: #382b22; border-radius: 8px; padding: 12px; VerticalLayout { spacing: 8px;
+                    Text { text: "Confirm termination of PID " + process_pid_text + " (" + process_name_text + ")? Unsaved work in that process may be lost."; color: #ffe0bf; }
+                    HorizontalLayout { spacing: 8px;
+                        Button { text: "Confirm and terminate"; clicked => { terminate-process-requested(process_pid_text, process_name_text); confirm_termination = false; } }
+                        Button { text: "Cancel"; clicked => { confirm_termination = false; } }
+                    }
+                } }
+                Text { text: "Top processes by memory usage"; color: #9fb0c4; font-size: 12px; }
+                Text { text: top_processes; color: #d6e0eb; font-size: 13px; }
+            } }
             if active_page == 3: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Windows services · " + service_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only inventory · Refresh to query current state"; color: #9fb0c4; font-size: 12px; } Text { text: service_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 4: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px; Text { text: "Startup entries · " + startup_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only inventory from Run and RunOnce registry keys. No changes are made."; color: #9fb0c4; font-size: 12px; } Text { text: startup_items; color: #d6e0eb; font-size: 12px; } } }
             if active_page == 5: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Network configuration"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only output from Windows ipconfig /all"; color: #9fb0c4; font-size: 12px; } Text { text: network_items; color: #d6e0eb; font-size: 11px; } } }
