@@ -75,17 +75,17 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public void RemoveStartup(StartupInfo? item)
     {
         if (item is null) { Status = "Select a startup entry first."; return; }
-        var confirm = MessageBox.Show($"Remove startup entry '{item.Name}' from {item.Location}?\\n\\nThe item will be backed up locally and recorded in the change journal before removal.", "Confirm startup removal", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        var confirm = MessageBox.Show($"Remove startup entry '{item.Name}' from {item.Location}?\n\nThe item will be backed up locally and recorded in the change journal before removal.", "Confirm startup removal", MessageBoxButton.YesNo, MessageBoxImage.Warning);
         if (confirm != MessageBoxResult.Yes) return;
         try
         {
             if (item.Location is "HKCU Run" or "HKLM Run")
             {
                 var root = item.Location == "HKCU Run" ? Registry.CurrentUser : Registry.LocalMachine;
-                using var key = root.OpenSubKey(@"Software\\Microsoft\\Windows\\CurrentVersion\\Run", writable: true) ?? throw new InvalidOperationException("Startup registry key unavailable.");
+                using var key = root.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", writable: true) ?? throw new InvalidOperationException("Startup registry key unavailable.");
                 var existing = key.GetValue(item.Name) ?? throw new InvalidOperationException("Startup entry no longer exists.");
                 var before = Convert.ToString(existing) ?? "";
-                _journal.Record("StartupRemoval", item.Location + "\\\\" + item.Name, before, "[REMOVED]", "User-confirmed startup entry removal.");
+                _journal.Record("StartupRemoval", item.Location + "\\" + item.Name, before, "[REMOVED]", "User-confirmed startup entry removal.");
                 key.DeleteValue(item.Name, throwOnMissingValue: true);
             }
             else if (item.Location == "User Startup folder")
