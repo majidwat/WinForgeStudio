@@ -68,31 +68,26 @@ fn main() -> Result<(), slint::PlatformError> {
         let outcome = if registry_value { startup::remove_current_user_entry(&name) } else { startup::remove_current_user_startup_file(&name) };
         let status = match outcome { Ok(message) => message, Err(error) => format!("Startup action blocked/failed: {error}") };
         if let Some(window) = startup_weak.upgrade() { window.set_scan_status(status.into()); }
-        refresh_async(startup_weak.clone());
     });
     let startup_restore_weak = ui.as_weak();
     ui.on_startup_restore_requested(move |backup_name| {
         let status = match startup::restore_current_user_startup_file(&backup_name) { Ok(message) => message, Err(error) => format!("Startup restore blocked/failed: {error}") };
         if let Some(window) = startup_restore_weak.upgrade() { window.set_scan_status(status.into()); }
-        refresh_async(startup_restore_weak.clone());
     });
     let service_weak = ui.as_weak();
     ui.on_service_action_requested(move |name, start| {
         let status = match service_control::set_running(&name, start) { Ok(message) => message, Err(error) => format!("Service action blocked/failed: {error}") };
         if let Some(window) = service_weak.upgrade() { window.set_scan_status(status.into()); }
-        refresh_async(service_weak.clone());
     });
     let service_mode_weak = ui.as_weak();
     ui.on_service_start_mode_requested(move |name, mode| {
         let status = match service_control::set_start_mode(&name, &mode) { Ok(message) => message, Err(error) => format!("Startup mode change blocked/failed: {error}") };
         if let Some(window) = service_mode_weak.upgrade() { window.set_scan_status(status.into()); }
-        refresh_async(service_mode_weak.clone());
     });
     let process_weak = ui.as_weak();
     ui.on_terminate_process_requested(move |pid_text, expected_name| {
         let status = match pid_text.parse::<i32>().map_err(|_| "PID must be a positive number".to_string()).and_then(|pid| process_control::terminate(pid, &expected_name)) { Ok(message) => message, Err(error) => format!("Action blocked/failed: {error}") };
         if let Some(window) = process_weak.upgrade() { window.set_scan_status(status.into()); }
-        refresh_async(process_weak.clone());
     });
     let export_weak = ui.as_weak();
     ui.on_export_requested(move || { if let Some(window) = export_weak.upgrade() { export_report(window.get_report_content().to_string(), export_weak.clone()); } });
@@ -111,7 +106,7 @@ fn refresh_async(weak: slint::Weak<MainWindow>) {
         let result = slint::invoke_from_event_loop(move || {
             if let Some(ui) = weak.upgrade() {
                 apply_snapshot(&ui, snapshot);
-                ui.set_scan_status("Scan complete · read-only".into());
+                ui.set_scan_status("Inventory scan complete".into());
             }
             SCAN_RUNNING.store(false, Ordering::Release);
         });
