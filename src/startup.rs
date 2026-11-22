@@ -103,3 +103,23 @@ pub fn remove_current_user_startup_file(name: &str) -> Result<String, String> {
 pub fn remove_current_user_entry(_: &str)->Result<String,String>{Err("Available only on Windows.".into())}
 #[cfg(not(windows))]
 pub fn remove_current_user_startup_file(_: &str)->Result<String,String>{Err("Available only on Windows.".into())}
+
+#[cfg(windows)]
+pub fn restore_current_user_startup_file(backup_name:&str)->Result<String,String>{
+    use std::path::PathBuf;
+    let name=backup_name.trim();
+    if name.is_empty() || name.chars().any(|c|c=='\\'||c=='/'||c=='\0') || name=="." || name==".." {return Err("Enter a backup file name only.".into());}
+    let profile=std::env::var_os("USERPROFILE").ok_or("User profile unavailable")?;
+    let backup=PathBuf::from(profile).join("Documents").join("WinForge Studio").join("Backups").join("StartupFiles").join(name);
+    if !backup.is_file(){return Err("Backup file was not found in WinForge StartupFiles backup folder.".into());}
+    let appdata=std::env::var_os("APPDATA").ok_or("APPDATA is unavailable")?;
+    let folder=PathBuf::from(appdata).join("Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+    std::fs::create_dir_all(&folder).map_err(|e|e.to_string())?;
+    let destination=folder.join(name);
+    if destination.exists(){return Err("A Startup item with this name already exists; restore cancelled to avoid overwrite.".into());}
+    std::fs::copy(&backup,&destination).map_err(|e|format!("Restore failed: {e}"))?;
+    if !destination.is_file(){return Err("Restore could not be verified.".into());}
+    Ok(format!("Restored '{name}' to the current-user Startup folder."))
+}
+#[cfg(not(windows))]
+pub fn restore_current_user_startup_file(_: &str)->Result<String,String>{Err("Available only on Windows.".into())}
