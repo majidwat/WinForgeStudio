@@ -73,7 +73,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public void StartService(ServiceInfo? item)
     {
         if (item is null) { Status = "Select a service first."; return; }
-        var answer = MessageBox.Show($"Start service {item.DisplayName}?\\n\\nCurrent state: {item.Status}", "Confirm service start", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        var answer = MessageBox.Show($"Start service {item.DisplayName}?\n\nCurrent state: {item.Status}", "Confirm service start", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (answer != MessageBoxResult.Yes) return;
         try { _services.Start(item.Name); Status = $"Started {item.DisplayName}."; _ = RefreshAsync(); }
         catch (Exception ex) { Status = $"Start failed: {ex.Message}"; }
@@ -83,7 +83,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     {
         if (item is null) { Status = "Select a service first."; return; }
         if (item.Risk == "Critical") { Status = "WinForge blocked stopping a critical Windows service."; return; }
-        var answer = MessageBox.Show($"Stop service {item.DisplayName}?\\n\\nRisk classification: {item.Risk}\\n{item.RiskReason}\\n\\nStopping a service may affect Windows or dependent applications.", "Confirm service stop", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        var answer = MessageBox.Show($"Stop service {item.DisplayName}?\n\nRisk classification: {item.Risk}\n{item.RiskReason}\n\nStopping a service may affect Windows or dependent applications.", "Confirm service stop", MessageBoxButton.YesNo, MessageBoxImage.Warning);
         if (answer != MessageBoxResult.Yes) return;
         try { _services.Stop(item.Name); Status = $"Stopped {item.DisplayName}."; _ = RefreshAsync(); }
         catch (Exception ex) { Status = $"Stop failed: {ex.Message}"; }
