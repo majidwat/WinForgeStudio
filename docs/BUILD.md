@@ -1,8 +1,21 @@
 # Build and test
 
-Requirements: Windows 10/11 and the stable Rust toolchain installed with rustup.
+Requirements: Windows 10/11, .NET 8 SDK, and stable Rust toolchain (the Rust inventory preview is still retained).
 
-From PowerShell at the repository root:
+## Build active Windows application
+
+From PowerShell at repository root:
+
+```powershell
+dotnet build src/WinForgeStudio/WinForgeStudio.csproj -c Release
+.package.ps1
+```
+
+The packaging script publishes a self-contained, single-file WPF app for `win-x64` and creates `target/release/WinForgeStudio-portable.zip`. The Windows executable is `target/release/WinForgeStudio-Windows/WinForgeStudio.exe`. No .NET runtime install should be needed on the target PC.
+
+GitHub Actions additionally runs the Rust module tests and builds the retained Rust/Slint preview, then publishes the **active WPF app** as `WinForgeStudio-windows` (EXE) and `WinForgeStudio-portable` (ZIP with docs), each retained for 14 days. Download the artifacts from the specific workflow run's Artifacts section. The EXE is unsigned and may trigger SmartScreen.
+
+## Rust inspection preview
 
 ```powershell
 cargo test --all-targets
@@ -10,12 +23,6 @@ cargo build --release
 cargo run
 ```
 
-Or run `.uild.ps1`, which executes the test suite and builds the Rust release binary. The executable is `target/release/winforge-studio.exe`.
+The root Rust + Slint app remains a read-only inspection preview and is not the active WPF artifact.
 
-GitHub Actions performs the same tests and release build on `windows-latest`. On success, download the `WinForgeStudio-windows` artifact from the workflow run page. The artifact is retained for 14 days. It is an unsigned preview executable, not an installer; SmartScreen may display a warning.
-
-The app does not auto-elevate. Some Windows inventory queries may return partial results based on permissions, Windows edition, hardware, or installed PowerShell modules.
-
-## Portable ZIP
-
-After a successful release build, run `.\package.ps1` from PowerShell. It stages the executable with README, BUILD and SECURITY documentation, then creates `target/release/WinForgeStudio-portable.zip`. No installer or system-wide changes are made. The portable app is unsigned.
+The WPF app does not auto-elevate. Service operations and inventory visibility may be limited by the current Windows account permissions.
