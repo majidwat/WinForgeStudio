@@ -23,6 +23,7 @@ mod firewall;
 mod restore_points;
 mod environment;
 mod process_control;
+mod service_control;
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
@@ -63,6 +64,11 @@ fn main() -> Result<(), slint::PlatformError> {
     refresh_async(weak.clone());
     ui.on_refresh_requested(move || refresh_async(weak.clone()));
     let action_weak = ui.as_weak();
+    ui.on_service_action_requested(move |name, start| {
+        let status = match service_control::set_running(&name, start) { Ok(message) => message, Err(error) => format!("Service action blocked/failed: {error}") };
+        if let Some(window) = action_weak.upgrade() { window.set_scan_status(status.into()); }
+        refresh_async(action_weak.clone());
+    });
     ui.on_terminate_process_requested(move |pid_text, expected_name| {
         let status = match pid_text.parse::<i32>().map_err(|_| "PID must be a positive number".to_string()).and_then(|pid| process_control::terminate(pid, &expected_name)) { Ok(message) => message, Err(error) => format!("Action blocked/failed: {error}") };
         if let Some(window) = action_weak.upgrade() { window.set_scan_status(status.into()); }
