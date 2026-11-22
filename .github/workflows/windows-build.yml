@@ -3,10 +3,6 @@ concurrency:
   group: winforge-build-${{ github.ref }}
   cancel-in-progress: false
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
