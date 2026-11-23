@@ -30,3 +30,19 @@ pub fn flush_dns_cache() -> Result<String, String> {
 }
 #[cfg(not(windows))]
 pub fn flush_dns_cache()->Result<String,String>{Err("DNS cache flush is available on Windows only.".into())}
+
+#[cfg(windows)]
+pub fn diagnostics() -> String {
+    let checks = [
+        ("Gateway reachability", Command::new("ping").args(["-n","2","-w","1200","1.1.1.1"]).output()),
+        ("DNS resolution", Command::new("nslookup").arg("example.com").output()),
+    ];
+    let mut report=String::from("Network diagnostics (non-invasive)\\n");
+    for (label, result) in checks {
+        report.push_str(&format!("\\n== {label} ==\\n"));
+        match result { Ok(out) => { report.push_str(&crate::output::bounded(&out.stdout)); if !out.status.success(){ report.push_str(&crate::output::bounded(&out.stderr)); } }, Err(e)=>report.push_str(&format!("Could not run check: {e}")) }
+    }
+    report
+}
+#[cfg(not(windows))]
+pub fn diagnostics()->String { "Network diagnostics are available on Windows only.".into() }
