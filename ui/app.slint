@@ -13,6 +13,7 @@ export component MainWindow inherits Window {
     in-out property <string> top_processes: "—";
     in-out property <string> startup_count: "—";
     in-out property <string> startup_items: "—";
+    in-out property <string> startup_filter: "";
     in-out property <string> service_count: "—";
     in-out property <string> service_items: "—";
     in-out property <string> network_items: "—";
@@ -70,9 +71,13 @@ export component MainWindow inherits Window {
     in-out property <string> service_start_mode: "Manual";
     in-out property <bool> confirm_service_mode: false;
     callback startup-remove-requested(string, bool);
+    callback startup-filter-requested(string);
     callback startup-restore-requested(string);
     callback startup-registry-restore-requested(string);
     callback network-flush-dns-requested();
+    callback app-uninstall-requested(string);
+    in-out property <string> app_uninstall_name: "";
+    in-out property <bool> confirm_app_uninstall: false;
     in-out property <bool> confirm_dns_flush: false;
     in-out property <string> startup_backup_name: "";
     in-out property <string> startup_entry_name: "";
@@ -191,6 +196,7 @@ export component MainWindow inherits Window {
             if active_page == 4: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 20px; spacing: 12px;
                 Text { text: "Startup entries · " + startup_count; color: #f0f4f9; font-size: 18px; font-weight: 700; }
                 Text { text: "Removal is limited to current-user Run/RunOnce values or files in the current-user Startup folder. A backup is created before removal."; color: #9fb0c4; font-size: 12px; }
+                LineEdit { width: 320px; placeholder-text: "Filter Startup inventory (type to search)"; text <=> startup_filter; edited => { startup-filter-requested(startup_filter); } }
                 LineEdit { width: 320px; placeholder-text: "Exact value name or Startup file name"; text <=> startup_entry_name; }
                 HorizontalLayout { spacing: 8px;
                     Button { text: "Remove Run registry value"; clicked => { startup_remove_registry = true; confirm_startup_remove = true; } }
@@ -212,7 +218,7 @@ export component MainWindow inherits Window {
             } }
             if active_page == 5: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Network configuration"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only ipconfig inventory. DNS flush clears the local resolver cache only; it does not change adapter settings."; color: #9fb0c4; font-size: 12px; } Button { text: "Flush DNS cache"; clicked => { confirm_dns_flush = true; } } if confirm_dns_flush: Rectangle { background: #382b22; border-radius: 8px; padding: 10px; VerticalLayout { spacing: 8px; Text { text: "Confirm flushing the local DNS cache?"; color: #ffe0bf; } HorizontalLayout { spacing: 8px; Button { text: "Confirm flush"; clicked => { network-flush-dns-requested(); confirm_dns_flush = false; } } Button { text: "Cancel"; clicked => { confirm_dns_flush = false; } } } } } Text { text: network_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 6: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Storage overview"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Physical disks and volumes · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: storage_items; color: #d6e0eb; font-size: 11px; } } }
-            if active_page == 7: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: apps_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Uninstall registry inventory · No applications are changed"; color: #9fb0c4; font-size: 12px; } Text { text: apps_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 7: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: apps_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Uninstall registry inventory · uninstall is exact-name matched and always interactive"; color: #9fb0c4; font-size: 12px; } HorizontalLayout { spacing: 8px; LineEdit { width: 300px; placeholder-text: "Exact application DisplayName"; text <=> app_uninstall_name; } Button { text: "Review uninstall"; clicked => { confirm_app_uninstall = true; } } } if confirm_app_uninstall: Rectangle { background: #382b22; border-radius: 8px; padding: 10px; VerticalLayout { spacing: 8px; Text { text: "Launch the registered uninstaller for exactly \"" + app_uninstall_name + "\"? The app may remove data. WinForge will not add silent flags."; color: #ffe0bf; } HorizontalLayout { spacing: 8px; Button { text: "Confirm and launch uninstaller"; clicked => { app-uninstall-requested(app_uninstall_name); confirm_app_uninstall = false; } } Button { text: "Cancel"; clicked => { confirm_app_uninstall = false; } } } } } Text { text: apps_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 8: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: drivers_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "PnP signed driver inventory · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: drivers_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 9: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: tasks_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Windows Task Scheduler inventory · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: tasks_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 10: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: events_count; color: #f0f4f9; font-size: 18px; } Text { text: "Recent System event warnings, errors and critical events · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: events_items; color: #d6e0eb; font-size: 11px; } } }
