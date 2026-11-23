@@ -1,4 +1,5 @@
 mod cleanup;
+mod health_diagnostics;
 mod privacy;
 mod hardware;
 mod device_health;
@@ -95,6 +96,14 @@ fn main() -> Result<(), slint::PlatformError> {
     ui.on_startup_registry_restore_requested(move |backup_name| {
         let status = match startup::restore_current_user_entry(&backup_name) { Ok(message) => message, Err(error) => format!("Registry startup restore blocked/failed: {error}") };
         if let Some(window) = startup_registry_restore_weak.upgrade() { window.set_scan_status(status.into()); }
+    });
+    let health_diagnostics_weak = ui.as_weak();
+    ui.on_health_diagnostics_requested(move || {
+        let weak = health_diagnostics_weak.clone();
+        std::thread::spawn(move || {
+            let report = health_diagnostics::run_read_only_checks();
+            let _ = slint::invoke_from_event_loop(move || if let Some(window) = weak.upgrade() { window.set_health_summary(report.into()); window.set_scan_status("Read-only integrity checks completed".into()); });
+        });
     });
     let cleanup_weak = ui.as_weak();
     let power_scheme_weak = ui.as_weak();
