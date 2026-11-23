@@ -102,7 +102,7 @@ fn main() -> Result<(), slint::PlatformError> {
         let weak = health_diagnostics_weak.clone();
         std::thread::spawn(move || {
             let report = health_diagnostics::run_read_only_checks();
-            let _ = slint::invoke_from_event_loop(move || if let Some(window) = weak.upgrade() { window.set_health_summary(report.into()); window.set_scan_status("Read-only integrity checks completed".into()); });
+            let _ = slint::invoke_from_event_loop(move || if let Some(window) = weak.upgrade() { window.set_health_diagnostics_items(report.into()); window.set_scan_status("Read-only integrity checks completed".into()); });
         });
     });
     let cleanup_weak = ui.as_weak();
