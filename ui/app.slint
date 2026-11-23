@@ -71,6 +71,7 @@ export component MainWindow inherits Window {
     in-out property <bool> confirm_service_mode: false;
     callback startup-remove-requested(string, bool);
     callback startup-restore-requested(string);
+    callback startup-registry-restore-requested(string);
     in-out property <string> startup_backup_name: "";
     in-out property <string> startup_entry_name: "";
     in-out property <bool> confirm_startup_remove: false;
@@ -203,6 +204,7 @@ export component MainWindow inherits Window {
                 HorizontalLayout { spacing: 8px;
                     LineEdit { width: 260px; placeholder-text: "Exact backup file name"; text <=> startup_backup_name; }
                     Button { text: "Restore Startup file backup"; clicked => { startup-restore-requested(startup_backup_name); } }
+                    Button { text: "Restore Registry backup"; clicked => { startup-registry-restore-requested(startup_backup_name); } }
                 }
                 Text { text: startup_items; color: #d6e0eb; font-size: 12px; }
             } }
