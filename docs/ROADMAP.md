@@ -24,7 +24,8 @@
 - [x] Read-only DISM CheckHealth and SFC verify-only integrity checks (async UI)
 - [x] Non-invasive ping and DNS network diagnostics; safe repair options remain
 - [ ] Persian localization and RTL
-- [x] System Restore point creation action with confirmation and journal\n- [ ] Windows 10/11 smoke test, signed installer (deferred; do not build until requested)
+- [x] System Restore point creation action with confirmation and journal
+- [ ] Windows 10/11 smoke test, signed installer (deferred; do not build until requested)
 
 ## Safety requirements
 No automatic elevation, silent destructive changes, registry cleaning, driver deletion, or undocumented debloating. Defender, Firewall, Windows Update, UAC and core services must not be weakened automatically. Every mutation must require explicit confirmation, journal before execution, verify outcome, and provide a recovery path.
