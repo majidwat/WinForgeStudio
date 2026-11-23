@@ -76,3 +76,39 @@ mod tests {
         assert_eq!(stats.bytes, u64::MAX);
     }
 }
+
+#[cfg(windows)]
+pub fn cleanup_user_temp_older_than(days: u64) -> Result<String,String> {
+    if days < 7 || days > 365 { return Err("Cleanup age must be between 7 and 365 days.".into()); }
+    let root=std::env::var_os("TEMP").ok_or("User TEMP directory is not defined")?;
+    let root=PathBuf::from(root);
+    let canonical=fs::canonicalize(&root).map_err(|e|format!("Cannot resolve user TEMP: {e}"))?;
+    if !canonical.is_dir() { return Err("User TEMP path is not a directory.".into()); }
+    let cutoff=std::time::SystemTime::now()-std::time::Duration::from_secs(days.saturating_mul(86400));
+    let mut removed_files=0u64; let mut freed=0u64; let mut failed=0u64;
+    fn walk(root:&Path,dir:&Path,cutoff:std::time::SystemTime,removed:&mut u64,freed:&mut u64,failed:&mut u64){
+        let entries=match fs::read_dir(dir){Ok(e)=>e,Err(_)=>{*failed+=1;return}};
+        for entry in entries.flatten(){
+            let p=entry.path(); let ft=match entry.file_type(){Ok(t)=>t,Err(_)=>{*failed+=1;continue}};
+            if ft.is_symlink(){continue;}
+            if ft.is_dir(){walk(root,&p,cutoff,removed,freed,failed); let _=fs::remove_dir(&p); continue;}
+            if ft.is_file(){
+                let meta=match entry.metadata(){Ok(m)=>m,Err(_)=>{*failed+=1;continue}};
+                if meta.modified().map(|m|m<cutoff).unwrap_or(false){
+                    if let Ok(c)=fs::canonicalize(&p){if !c.starts_with(root){*failed+=1;continue;}}
+                    match fs::remove_file(&p){Ok(())=>{*removed+=1;*freed=freed.saturating_add(meta.len());},Err(_)=>*failed+=1}
+                }
+            }
+        }
+    }
+    walk(&canonical,&canonical,cutoff,&mut removed_files,&mut freed,&mut failed);
+    let profile=std::env::var_os("USERPROFILE").ok_or("User profile unavailable")?;
+    let logdir=PathBuf::from(profile).join("Documents").join("WinForge Studio").join("Journal");
+    fs::create_dir_all(&logdir).map_err(|e|e.to_string())?;
+    use std::io::Write; let mut log=fs::OpenOptions::new().create(true).append(true).open(logdir.join("actions.log")).map_err(|e|e.to_string())?;
+    let stamp=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d|d.as_secs()).unwrap_or(0);
+    writeln!(log,"{stamp} | CLEANUP user-temp older-than-days={days} removed-files={removed_files} bytes={freed} failures={failed}").map_err(|e|e.to_string())?;
+    Ok(format!("Cleanup complete. Removed {removed_files} files older than {days} days; reclaimed approximately {} bytes. Failed/inaccessible items: {failed}. Only current-user TEMP was targeted; reparse points were skipped.",freed))
+}
+#[cfg(not(windows))]
+pub fn cleanup_user_temp_older_than(_:u64)->Result<String,String>{Err("Cleanup is Windows-only.".into())}
