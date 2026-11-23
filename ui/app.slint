@@ -48,7 +48,9 @@ export component MainWindow inherits Window {
     in-out property <string> boot_items: "—";
     in-out property <string> scan_status: "Starting scan…";
     in-out property <string> power_count: "—";
-    in-out property <string> power_items: "—";\n    in-out property <string> confirm_power_scheme: "";\n    callback power-scheme-requested(string);
+    in-out property <string> power_items: "—";
+    in-out property <string> confirm_power_scheme: "";
+    callback power-scheme-requested(string);
     in-out property <string> device_health_count: "—";
     in-out property <string> device_health_items: "—";
     in-out property <string> hardware_count: "—";
@@ -79,7 +81,8 @@ export component MainWindow inherits Window {
     callback network-flush-dns-requested();
     callback network-diagnostics-requested();
     callback app-uninstall-requested(string);
-    callback app-filter-requested(string);\n    callback cleanup-requested();
+    callback app-filter-requested(string);
+    callback cleanup-requested();
     callback restore-point-create-requested(string);
     in-out property <string> app_uninstall_name: "";
     in-out property <string> apps_filter: "";
