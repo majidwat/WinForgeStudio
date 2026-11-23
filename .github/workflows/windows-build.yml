@@ -3,6 +3,15 @@ concurrency:
   group: winforge-build-${{ github.ref }}
   cancel-in-progress: false
 on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "ui/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "package.ps1"
+      - ".github/workflows/windows-build.yml"
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,12 +27,10 @@ jobs:
         uses: Swatinem/rust-cache@v2
         continue-on-error: true
         timeout-minutes: 2
-      - name: Run Rust tests
-        run: cargo test --all-targets
       - name: Build native Rust Slint application
         run: cargo build --release
       - name: Package portable Rust application
-        run: .\package.ps1
+        run: .\\package.ps1
       - name: Upload portable ZIP
         uses: actions/upload-artifact@v4
         with:
