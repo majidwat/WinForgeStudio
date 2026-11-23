@@ -17,9 +17,9 @@
 - [ ] Storage cleanup: selectable preview, size calculation, safety checks, confirmation, recovery strategy
 - [x] Installed-app filtering and exact-name interactive uninstall launch (MSI or registered uninstaller; script-host commands blocked)
 - [x] Confirmed DNS cache flush with action journal
-- [ ] Additional network diagnostics and safe repair options
+- [x] Non-invasive ping and DNS network diagnostics; safe repair options remain
 - [ ] Persian localization and RTL
-- [ ] Windows 10/11 smoke test, signed installer (deferred; do not build until requested)
+- [x] System Restore point creation action with confirmation and journal\n- [ ] Windows 10/11 smoke test, signed installer (deferred; do not build until requested)
 
 ## Safety requirements
 No automatic elevation, silent destructive changes, registry cleaning, driver deletion, or undocumented debloating. Defender, Firewall, Windows Update, UAC and core services must not be weakened automatically. Every mutation must require explicit confirmation, journal before execution, verify outcome, and provide a recovery path.
