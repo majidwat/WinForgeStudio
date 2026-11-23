@@ -116,7 +116,9 @@ fn main() -> Result<(), slint::PlatformError> {
     ui.on_power_scheme_requested(move |guid| {
         let status = match power::activate_scheme(&guid) { Ok(message) => message, Err(error) => format!("Power scheme change failed/blocked: {error}") };
         if let Some(window) = power_scheme_weak.upgrade() { window.set_scan_status(status.into()); }
-    });\n    ui.on_cleanup_requested(move || { let result = cleanup::cleanup_user_temp_older_than(7); if let Some(window) = cleanup_weak.upgrade() { window.set_scan_status(match result { Ok(msg)=>msg,Err(e)=>format!("Cleanup blocked/failed: {e}") }.into()); } });\n    let restore_create_weak = ui.as_weak();
+    });
+    ui.on_cleanup_requested(move || { let result = cleanup::cleanup_user_temp_older_than(7); if let Some(window) = cleanup_weak.upgrade() { window.set_scan_status(match result { Ok(msg)=>msg,Err(e)=>format!("Cleanup blocked/failed: {e}") }.into()); } });
+    let restore_create_weak = ui.as_weak();
     ui.on_restore_point_create_requested(move |description| { let result = restore_points::create_restore_point(&description); if let Some(window) = restore_create_weak.upgrade() { window.set_scan_status(match result { Ok(msg)=>msg,Err(e)=>e }.into()); } });
     let diagnostics_weak = ui.as_weak();
     ui.on_network_diagnostics_requested(move || { let report = network::diagnostics(); if let Some(window) = diagnostics_weak.upgrade() { window.set_network_items(report.into()); window.set_scan_status("Network diagnostics complete".into()); } });
