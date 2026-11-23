@@ -96,6 +96,8 @@ fn main() -> Result<(), slint::PlatformError> {
         let status = match startup::restore_current_user_entry(&backup_name) { Ok(message) => message, Err(error) => format!("Registry startup restore blocked/failed: {error}") };
         if let Some(window) = startup_registry_restore_weak.upgrade() { window.set_scan_status(status.into()); }
     });
+    let restore_create_weak = ui.as_weak();
+    ui.on_restore_point_create_requested(move |description| { let result = restore_points::create_restore_point(&description); if let Some(window) = restore_create_weak.upgrade() { window.set_scan_status(match result { Ok(msg)=>msg,Err(e)=>e }.into()); } });
     let diagnostics_weak = ui.as_weak();
     ui.on_network_diagnostics_requested(move || { let report = network::diagnostics(); if let Some(window) = diagnostics_weak.upgrade() { window.set_network_items(report.into()); window.set_scan_status("Network diagnostics complete".into()); } });
     let dns_weak = ui.as_weak();
