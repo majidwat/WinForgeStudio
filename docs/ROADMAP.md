@@ -11,6 +11,7 @@
 - [x] Process termination in Rust/Slint with explicit confirmation, PID/image identity checks, protected-process denylist and journal
 - [x] Service start/stop and Manual/Automatic startup mode controls with core-service denylist, explicit confirmation, verification and journal
 - [x] Service inventory filtering
+- [x] Local action journal history viewer (read-only; recovery UI remains pending)
 - [ ] Full risk classification/recovery UI
 - [x] Current-user Run/RunOnce and Startup-folder removal with backup-before-delete
 - [x] Startup filtering and restore for registry values/Startup files with backup validation and overwrite protection
