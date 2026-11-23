@@ -13,10 +13,12 @@
 - [x] Service inventory filtering
 - [x] Local action journal history viewer (read-only; recovery UI remains pending)
 - [ ] Full risk classification/recovery UI
+- [x] Conservative security recommendations appended to read-only security report
 - [x] Current-user Run/RunOnce and Startup-folder removal with backup-before-delete
 - [x] Startup filtering and restore for registry values/Startup files with backup validation and overwrite protection
 - [ ] Structured interactive tables (not only text output), per-module loading/error states and scan timestamps
 - [x] Read-only DISM CheckHealth + SFC verify-only integrity diagnostics
+- [x] Local action-history viewer (latest entries, read-only)
 - [ ] Storage cleanup: per-category selectable preview, size calculation, stronger recovery and UI report (guarded stale user-temp cleanup implemented)
 - [x] Installed-app filtering and exact-name interactive uninstall launch (MSI or registered uninstaller; script-host commands blocked)
 - [x] Confirmed DNS cache flush with action journal
