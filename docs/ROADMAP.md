@@ -17,6 +17,8 @@
 - [ ] Storage cleanup: per-category selectable preview, size calculation, stronger recovery and UI report (guarded stale user-temp cleanup implemented)
 - [x] Installed-app filtering and exact-name interactive uninstall launch (MSI or registered uninstaller; script-host commands blocked)
 - [x] Confirmed DNS cache flush with action journal
+- [x] Installed power scheme activation with validation, confirmation and journal
+- [x] Read-only DISM CheckHealth and SFC verify-only integrity checks (async UI)
 - [x] Non-invasive ping and DNS network diagnostics; safe repair options remain
 - [ ] Persian localization and RTL
 - [x] System Restore point creation action with confirmation and journal\n- [ ] Windows 10/11 smoke test, signed installer (deferred; do not build until requested)
