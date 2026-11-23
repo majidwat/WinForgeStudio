@@ -72,6 +72,8 @@ export component MainWindow inherits Window {
     callback startup-remove-requested(string, bool);
     callback startup-restore-requested(string);
     callback startup-registry-restore-requested(string);
+    callback network-flush-dns-requested();
+    in-out property <bool> confirm_dns_flush: false;
     in-out property <string> startup_backup_name: "";
     in-out property <string> startup_entry_name: "";
     in-out property <bool> confirm_startup_remove: false;
@@ -208,7 +210,7 @@ export component MainWindow inherits Window {
                 }
                 Text { text: startup_items; color: #d6e0eb; font-size: 12px; }
             } }
-            if active_page == 5: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Network configuration"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only output from Windows ipconfig /all"; color: #9fb0c4; font-size: 12px; } Text { text: network_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 5: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Network configuration"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Read-only ipconfig inventory. DNS flush clears the local resolver cache only; it does not change adapter settings."; color: #9fb0c4; font-size: 12px; } Button { text: "Flush DNS cache"; clicked => { confirm_dns_flush = true; } } if confirm_dns_flush: Rectangle { background: #382b22; border-radius: 8px; padding: 10px; VerticalLayout { spacing: 8px; Text { text: "Confirm flushing the local DNS cache?"; color: #ffe0bf; } HorizontalLayout { spacing: 8px; Button { text: "Confirm flush"; clicked => { network-flush-dns-requested(); confirm_dns_flush = false; } } Button { text: "Cancel"; clicked => { confirm_dns_flush = false; } } } } } Text { text: network_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 6: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: "Storage overview"; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Physical disks and volumes · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: storage_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 7: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: apps_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "Uninstall registry inventory · No applications are changed"; color: #9fb0c4; font-size: 12px; } Text { text: apps_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 8: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: drivers_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } Text { text: "PnP signed driver inventory · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: drivers_items; color: #d6e0eb; font-size: 11px; } } }
