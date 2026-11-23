@@ -1,4 +1,5 @@
 mod cleanup;
+mod action_history;
 mod health_diagnostics;
 mod privacy;
 mod hardware;
@@ -102,6 +103,11 @@ fn main() -> Result<(), slint::PlatformError> {
     ui.on_startup_registry_restore_requested(move |backup_name| {
         let status = match startup::restore_current_user_entry(&backup_name) { Ok(message) => message, Err(error) => format!("Registry startup restore blocked/failed: {error}") };
         if let Some(window) = startup_registry_restore_weak.upgrade() { window.set_scan_status(status.into()); }
+    });
+    let action_history_weak = ui.as_weak();
+    ui.on_action_history_refresh_requested(move || {
+        let content = action_history::read_history();
+        if let Some(window) = action_history_weak.upgrade() { window.set_action_history_items(content.into()); }
     });
     let health_diagnostics_weak = ui.as_weak();
     ui.on_health_diagnostics_requested(move || {
