@@ -12,11 +12,12 @@
 - [x] Service start/stop and Manual/Automatic startup mode controls with core-service denylist, explicit confirmation, verification and journal
 - [ ] Service filtering and full risk classification/recovery UI
 - [x] Current-user Run/RunOnce and Startup-folder removal with backup-before-delete
-- [ ] Startup filtering (registry-value restore is implemented with backup validation and overwrite protection)
+- [ ] Startup filtering (registry-value and Startup-file restore are implemented with backup validation and overwrite protection)
 - [ ] Structured interactive tables (not only text output), per-module loading/error states and scan timestamps
 - [ ] Storage cleanup: selectable preview, size calculation, safety checks, confirmation, recovery strategy
 - [ ] Installed-app management via supported uninstall commands and confirmation
-- [ ] Network diagnostics with safe repair options
+- [x] Confirmed DNS cache flush with action journal
+- [ ] Additional network diagnostics and safe repair options
 - [ ] Persian localization and RTL
 - [ ] Windows 10/11 smoke test, signed installer (deferred; do not build until requested)
 
