@@ -70,6 +70,12 @@ fn main() -> Result<(), slint::PlatformError> {
         let filtered = if filter.trim().is_empty() { inventory } else { inventory.lines().filter(|line| line.to_lowercase().contains(&filter.to_lowercase())).collect::<Vec<_>>().join("\n") };
         if let Some(window) = startup_filter_weak.upgrade() { window.set_startup_items(filtered.into()); }
     });
+    let service_filter_weak = ui.as_weak();
+    ui.on_service_filter_requested(move |filter| {
+        let (_, inventory) = services::inventory();
+        let filtered = if filter.trim().is_empty() { inventory } else { inventory.lines().filter(|line| line.to_lowercase().contains(&filter.to_lowercase())).collect::<Vec<_>>().join("\n") };
+        if let Some(window) = service_filter_weak.upgrade() { window.set_service_items(filtered.into()); }
+    });
     let app_filter_weak = ui.as_weak();
     ui.on_app_filter_requested(move |filter| {
         let (_, inventory) = apps::inventory();
