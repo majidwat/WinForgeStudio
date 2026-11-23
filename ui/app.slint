@@ -32,6 +32,8 @@ export component MainWindow inherits Window {
     in-out property <string> firewall_items: "—";
     in-out property <string> restore_count: "—";
     in-out property <string> restore_items: "—";
+    in-out property <string> restore_description: "WinForge Studio checkpoint";
+    in-out property <bool> confirm_restore_create: false;
     in-out property <string> environment_count: "—";
     in-out property <string> environment_items: "—";
     in-out property <string> battery_count: "—";
@@ -78,6 +80,7 @@ export component MainWindow inherits Window {
     callback network-diagnostics-requested();
     callback app-uninstall-requested(string);
     callback app-filter-requested(string);
+    callback restore-point-create-requested(string);
     in-out property <string> app_uninstall_name: "";
     in-out property <string> apps_filter: "";
     in-out property <bool> confirm_app_uninstall: false;
@@ -229,7 +232,9 @@ export component MainWindow inherits Window {
             if active_page == 10: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: events_count; color: #f0f4f9; font-size: 18px; } Text { text: "Recent System event warnings, errors and critical events · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: events_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 11: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: updates_count; color: #f0f4f9; font-size: 18px; } Text { text: "Installed hotfix inventory · Does not install or remove updates"; color: #9fb0c4; font-size: 12px; } Text { text: updates_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 12: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: firewall_count; color: #f0f4f9; font-size: 18px; } Text { text: "Firewall profile settings and enabled rules · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: firewall_items; color: #d6e0eb; font-size: 11px; } } }
-            if active_page == 13: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: restore_count; color: #f0f4f9; font-size: 18px; } Text { text: "Existing system restore points · Read-only"; color: #9fb0c4; font-size: 12px; } Text { text: restore_items; color: #d6e0eb; font-size: 11px; } } }
+            if active_page == 13: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: restore_count; color: #f0f4f9; font-size: 18px; } Text { text: "Restore point inventory and manual checkpoint creation. Windows may require running WinForge as Administrator."; color: #9fb0c4; font-size: 12px; }
+                HorizontalLayout { spacing: 8px; LineEdit { width: 300px; text <=> restore_description; placeholder-text: "Restore point description"; } Button { text: "Create restore point"; clicked => { confirm_restore_create = true; } } }
+                if confirm_restore_create: Rectangle { background: #382b22; border-radius: 8px; padding: 10px; VerticalLayout { spacing: 8px; Text { text: "Create a Windows System Restore Point named \"" + restore_description + "\"? This can fail if System Protection is disabled or permission is insufficient."; color: #ffe0bf; } HorizontalLayout { spacing: 8px; Button { text: "Confirm create"; clicked => { restore-point-create-requested(restore_description); confirm_restore_create = false; } } Button { text: "Cancel"; clicked => { confirm_restore_create = false; } } } } } Text { text: restore_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 14: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: environment_count; color: #f0f4f9; font-size: 18px; } Text { text: "Current process environment variables · Values may contain private paths or tokens"; color: #9fb0c4; font-size: 12px; } Text { text: environment_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 15: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: security_count; color: #f0f4f9; font-size: 18px; } Text { text: "Defender, Firewall and UAC status · Read-only checks"; color: #9fb0c4; font-size: 12px; } Text { text: security_items; color: #d6e0eb; font-size: 11px; } } }
             if active_page == 16: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px; Text { text: battery_count; color: #f0f4f9; font-size: 18px; } Text { text: "Battery presence and reported charge/capacity · Hardware dependent"; color: #9fb0c4; font-size: 12px; } Text { text: battery_items; color: #d6e0eb; font-size: 11px; } } }
