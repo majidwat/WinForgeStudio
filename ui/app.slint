@@ -16,6 +16,8 @@ export component MainWindow inherits Window {
     in-out property <string> startup_filter: "";
     in-out property <string> service_count: "—";
     in-out property <string> service_items: "—";
+    in-out property <string> service_filter: "";
+    callback service-filter-requested(string);
     in-out property <string> network_items: "—";
     in-out property <string> storage_items: "—";
     in-out property <string> apps_count: "—";
@@ -179,7 +181,7 @@ export component MainWindow inherits Window {
                 Text { text: top_processes; color: #d6e0eb; font-size: 13px; }
             } }
             if active_page == 3: Rectangle { border-radius: 10px; background: #1a222d; VerticalLayout { padding: 18px; spacing: 10px;
-                Text { text: "Windows services · " + service_count; color: #f0f4f9; font-size: 18px; font-weight: 700; }
+                Text { text: "Windows services · " + service_count; color: #f0f4f9; font-size: 18px; font-weight: 700; } LineEdit { width: 320px; placeholder-text: "Filter services by name/state"; text <=> service_filter; edited => { service-filter-requested(service_filter); } }
                 Text { text: "Enter the exact service Name (not Display Name). Core Windows services are blocked. Changes are journaled and verified."; color: #9fb0c4; font-size: 12px; }
                 HorizontalLayout { spacing: 8px;
                     LineEdit { width: 220px; placeholder-text: "Service name e.g. Spooler"; text <=> service_name_text; }
