@@ -72,7 +72,7 @@ fn main() -> Result<(), slint::PlatformError> {
     let app_filter_weak = ui.as_weak();
     ui.on_app_filter_requested(move |filter| {
         let (_, inventory) = apps::inventory();
-        let filtered = if filter.trim().is_empty() { inventory } else { inventory.lines().filter(|line| line.to_lowercase().contains(&filter.to_lowercase())).collect::<Vec<_>>().join("\\n") };
+        let filtered = if filter.trim().is_empty() { inventory } else { inventory.lines().filter(|line| line.to_lowercase().contains(&filter.to_lowercase())).collect::<Vec<_>>().join("\n") };
         if let Some(window) = app_filter_weak.upgrade() { window.set_apps_items(filtered.into()); }
     });
     let app_uninstall_weak = ui.as_weak();
