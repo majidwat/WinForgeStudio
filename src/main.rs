@@ -79,6 +79,11 @@ fn main() -> Result<(), slint::PlatformError> {
         let status = match startup::restore_current_user_entry(&backup_name) { Ok(message) => message, Err(error) => format!("Registry startup restore blocked/failed: {error}") };
         if let Some(window) = startup_registry_restore_weak.upgrade() { window.set_scan_status(status.into()); }
     });
+    let dns_weak = ui.as_weak();
+    ui.on_network_flush_dns_requested(move || {
+        let status = match network::flush_dns_cache() { Ok(message) => message, Err(error) => format!("DNS flush failed: {error}") };
+        if let Some(window) = dns_weak.upgrade() { window.set_scan_status(status.into()); }
+    });
     let service_weak = ui.as_weak();
     ui.on_service_action_requested(move |name, start| {
         let status = match service_control::set_running(&name, start) { Ok(message) => message, Err(error) => format!("Service action blocked/failed: {error}") };
