@@ -139,3 +139,35 @@ fn journal_startup_action(message:&str)->Result<(),String>{
     let stamp=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d|d.as_secs()).unwrap_or(0);
     writeln!(f,"{stamp} | {message}").map_err(|e|e.to_string())
 }
+
+#[cfg(windows)]
+pub fn restore_current_user_entry(backup_name: &str) -> Result<String, String> {
+    use winreg::{enums::{HKEY_CURRENT_USER, KEY_READ, KEY_WRITE, RegType}, RegKey, RegValue};
+    use std::path::PathBuf;
+    let name = backup_name.trim();
+    if name.is_empty() || name.chars().any(|c| c=='\\\\' || c=='/' || c=='\\0') || name=="." || name==".." { return Err("Enter a backup file name only.".into()); }
+    let profile=std::env::var_os("USERPROFILE").ok_or("User profile unavailable")?;
+    let path=PathBuf::from(profile).join("Documents").join("WinForge Studio").join("Backups").join(name);
+    if !path.is_file() || !name.starts_with("startup-registry-") { return Err("Registry backup file not found or invalid name.".into()); }
+    let raw=std::fs::read_to_string(&path).map_err(|e|format!("Could not read backup: {e}"))?;
+    let key_path=raw.lines().find_map(|l|l.strip_prefix("Key: HKCU\\\\")).ok_or("Backup does not contain a valid HKCU registry path.")?;
+    let value_name=raw.lines().find_map(|l|l.strip_prefix("Name: ")).ok_or("Backup value name missing.")?;
+    let type_line=raw.lines().find_map(|l|l.strip_prefix("Type: ")).ok_or("Backup type missing.")?;
+    let hex=raw.lines().find_map(|l|l.strip_prefix("DataHex: ")).ok_or("Backup data missing.")?;
+    let allowed=["Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run","Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\RunOnce","Software\\\\WOW6432Node\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run","Software\\\\WOW6432Node\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\RunOnce"];
+    if !allowed.contains(&key_path) || value_name.is_empty() || value_name.chars().any(|c|c=='\\\\'||c=='/'||c=='\\0') { return Err("Backup path/value is outside the allowed current-user startup keys.".into()); }
+    let vtype=match type_line { "REG_SZ"=>RegType::REG_SZ, "REG_EXPAND_SZ"=>RegType::REG_EXPAND_SZ, "REG_BINARY"=>RegType::REG_BINARY, "REG_DWORD"=>RegType::REG_DWORD, "REG_MULTI_SZ"=>RegType::REG_MULTI_SZ, "REG_QWORD"=>RegType::REG_QWORD, "REG_NONE"=>RegType::REG_NONE, _=>return Err("Unsupported registry value type in backup.".into()) };
+    if hex.len()%2!=0 || hex.len()>2_000_000 { return Err("Backup data is malformed or exceeds the safety limit.".into()); }
+    let mut bytes=Vec::with_capacity(hex.len()/2);
+    for pair in hex.as_bytes().chunks_exact(2) { let s=std::str::from_utf8(pair).map_err(|e|e.to_string())?; bytes.push(u8::from_str_radix(s,16).map_err(|e|e.to_string())?); }
+    let root=RegKey::predef(HKEY_CURRENT_USER);
+    let key=root.open_subkey_with_flags(key_path,KEY_READ|KEY_WRITE).map_err(|e|format!("Cannot open allowed startup key: {e}"))?;
+    if key.get_raw_value(value_name).is_ok() { return Err("A value with this name already exists. Restore refused to overwrite it.".into()); }
+    journal_startup_action(&format!("REQUEST startup-registry-restore key=HKCU\\\\{key_path} name={value_name} backup={}",path.display()))?;
+    key.set_raw_value(value_name,&RegValue{vtype,bytes}).map_err(|e|format!("Registry restore failed: {e}"))?;
+    if key.get_raw_value(value_name).is_err(){return Err("Registry restore could not be verified.".into());}
+    journal_startup_action(&format!("SUCCESS startup-registry-restore key=HKCU\\\\{key_path} name={value_name}"))?;
+    Ok(format!("Restored HKCU startup value '{value_name}'."))
+}
+#[cfg(not(windows))]
+pub fn restore_current_user_entry(_: &str)->Result<String,String>{Err("Available only on Windows.".into())}
